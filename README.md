@@ -3,10 +3,10 @@ Managing volume level of different audio streams and listen volume changes from 
 
 ## lib
 [VolumeControl]
-(https://github.com/punksta/volume_control_android/blob/master/lib/src/main/java/com/punksta/apps/libs/VolumeControl.java) - class wrapper over android AudioManager, allowing listen volume chaches easy
+(https://github.com/punksta/volume_control_android/blob/master/lib/src/main/java/com/punksta/apps/libs/VolumeControl.java) - class - wrapper over android AudioManager allowing to listen volume chaches
 
 
 ## app
-Example of ussing
+Example of using
 
 ![screenshot](https://github.com/punksta/volume_control_android/blob/master/Screenshot_20160619-190023.png)
