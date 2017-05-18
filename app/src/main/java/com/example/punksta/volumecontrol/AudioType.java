@@ -11,7 +11,9 @@ public enum AudioType {
     MEDIA("Media", AudioManager.STREAM_MUSIC),
     NOTIFICATION("Notification", AudioManager.STREAM_NOTIFICATION),
     VOICE_CALL("Voice call", AudioManager.STREAM_VOICE_CALL),
-    SYSTEM_SOUNDS("System sounds", AudioManager.STREAM_SYSTEM);
+    SYSTEM_SOUNDS("System sounds", AudioManager.STREAM_SYSTEM),
+    DTMF("DTMF tokens", AudioManager.STREAM_DTMF),
+    ;
 
 
     public final String displayName;
