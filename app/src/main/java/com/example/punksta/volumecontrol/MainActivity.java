@@ -1,5 +1,9 @@
 package com.example.punksta.volumecontrol;
 
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +11,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.punksta.apps.libs.VolumeControl;
 
@@ -17,11 +22,13 @@ public class MainActivity extends AppCompatActivity {
 
     private VolumeControl control;
     private List<TypeListener> volumeListeners = new ArrayList<>();
+    private NotificationManager notificationManager;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         setContentView(R.layout.activity_main);
         LinearLayout scrollView = (LinearLayout) findViewById(R.id.audio_types_holder);
 
@@ -37,12 +44,16 @@ public class MainActivity extends AppCompatActivity {
             title.setText(type.displayName);
 
             seekBar.setMax(control.getMaxLevel(type.audioStreamName));
+            seekBar.setProgress(control.getLevel(type.audioStreamName));
 
             final TypeListener volumeListener = new TypeListener(type.audioStreamName) {
                 @Override public void onChangeIndex(int audioType, int currentLevel, int max) {
-                    String str = 100 * currentLevel / max  + "%";
+                    String str = "" + currentLevel + "/" + max;
                     currentValue.setText(str);
-                    seekBar.setProgress(currentLevel);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                        seekBar.setProgress(currentLevel, true);
+                    else
+                        seekBar.setProgress(currentLevel);
                 }
             };
 
@@ -51,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    control.setVolumeLevel(type.audioStreamName, progress);
+                    requireChangeVolume(type, progress, seekBar);
                 }
 
                 @Override public void onStartTrackingTouch(SeekBar seekBar) {
@@ -67,6 +78,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    private void requireChangeVolume(AudioType audioType, int volume, SeekBar seekBar) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+                !notificationManager.isNotificationPolicyAccessGranted()) {
+                Intent intent = new Intent(
+                        android.provider.Settings
+                                .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                startActivity(intent);
+        } else {
+            try {
+                control.setVolumeLevel(audioType.audioStreamName, volume);
+            } catch (Throwable throwable) {
+                Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                throwable.printStackTrace();
+                seekBar.setProgress(control.getLevel(audioType.audioStreamName));
+            }
+        }
+    }
+
+
     @Override protected void onStart() {
         super.onStart();
         for (TypeListener listener : volumeListeners)
@@ -79,6 +110,11 @@ public class MainActivity extends AppCompatActivity {
             control.unRegisterVolumeListener(volumeListener.type, volumeListener);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        volumeListeners.clear();
+    }
 
     private abstract class TypeListener implements VolumeControl.VolumeListener {
         public final int type;
