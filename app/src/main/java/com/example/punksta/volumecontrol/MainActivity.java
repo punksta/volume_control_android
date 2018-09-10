@@ -32,12 +32,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
         setContentView(R.layout.activity_main);
+
+        control = new VolumeControl(this.getApplicationContext(), mHandler);
+
+        buildUi();
+    }
+
+    private void buildUi() {
         LinearLayout scrollView = (LinearLayout) findViewById(R.id.audio_types_holder);
 
         LayoutInflater inflater = getLayoutInflater();
-        control = new VolumeControl(this.getApplicationContext(), mHandler);
 
         for (final AudioType type : AudioType.values()) {
             View view = inflater.inflate(R.layout.audiu_type_view, scrollView, false);
@@ -125,9 +131,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     @Override
     protected void onStart() {
         super.onStart();
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         for (TypeListener listener : volumeListeners)
             control.registerVolumeListener(listener.type, listener, true);
     }
