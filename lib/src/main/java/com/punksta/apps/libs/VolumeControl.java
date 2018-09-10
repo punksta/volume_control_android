@@ -4,9 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.ContentObserver;
 import android.media.AudioManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 
@@ -26,13 +24,15 @@ public class VolumeControl {
     private final Map<Integer, Set<VolumeListener>> listenerSet = new HashMap<>();
 
     private final IntentFilter intentFilter;
-
     private AudioObserver audioObserver = new AudioObserver();
+    private final Handler handler;
 
+    private boolean ignoreUpdates = false;
 
-    public VolumeControl(Context context) {
+    public VolumeControl(Context context, Handler handler) {
         this.context = context;
         mediaManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        this.handler = handler;
 
         intentFilter = new IntentFilter();
         intentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
@@ -40,8 +40,6 @@ public class VolumeControl {
         intentFilter.addAction("android.media.RINGER_MODE_CHANGED");
         intentFilter.addAction("android.media.EXTRA_VIBRATE_SETTING");
         intentFilter.addAction("android.media.EXTRA_VIBRATE_SETTING");
-
-
     }
 
 
@@ -54,7 +52,11 @@ public class VolumeControl {
     }
 
     public int getMinLevel(int type) {
-        return mediaManager.getStreamMinVolume(type);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            return mediaManager.getStreamMinVolume(type);
+        } else {
+            return 0;
+        }
     }
 
     public int getLevel(int type) {
@@ -109,15 +111,30 @@ public class VolumeControl {
         }
 
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
+        private void update() {
             for (Map.Entry<Integer, Set<VolumeListener>> entry : listenerSet.entrySet()) {
                 Integer current = getLevel(entry.getKey());
-                Integer lastValue = lastVolumes.get(entry.getKey());
-                if (lastValue == null || lastValue.intValue() != current) {
-                    notifyListeners(entry.getKey(), current);
-                }
+                notifyListeners(entry.getKey(), current);
             }
+        }
+
+        private Runnable updateRunnable = new Runnable() {
+            @Override
+            public void run() {
+                update();
+                ignoreUpdates = false;
+            }
+        };
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (ignoreUpdates) {
+                handler.removeCallbacks(updateRunnable);
+                handler.postDelayed(updateRunnable, 500);
+                return;
+            }
+            ignoreUpdates = true;
+            handler.postDelayed(updateRunnable, 500);
         }
     }
 }

@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
     private NotificationManager notificationManager;
 
 
+    private boolean ignoreRequests = false;
+    private Handler mHandler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,9 +37,9 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout scrollView = (LinearLayout) findViewById(R.id.audio_types_holder);
 
         LayoutInflater inflater = getLayoutInflater();
-        control = new VolumeControl(this.getApplicationContext());
+        control = new VolumeControl(this.getApplicationContext(), mHandler);
 
-        for (final AudioType type: AudioType.values()) {
+        for (final AudioType type : AudioType.values()) {
             View view = inflater.inflate(R.layout.audiu_type_view, scrollView, false);
             final TextView title = (TextView) view.findViewById(R.id.title);
             final TextView currentValue = (TextView) view.findViewById(R.id.current_value);
@@ -51,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
             seekBar.setProgress(control.getLevel(type.audioStreamName));
 
             final TypeListener volumeListener = new TypeListener(type.audioStreamName) {
-                @Override public void onChangeIndex(int audioType, int currentLevel, int max) {
+                @Override
+                public void onChangeIndex(int audioType, int currentLevel, int max) {
                     if (currentLevel < control.getMinLevel(type)) {
                         seekBar.setProgress(control.getMinLevel(type));
                     } else {
@@ -73,11 +78,13 @@ public class MainActivity extends AppCompatActivity {
                     requireChangeVolume(type, progress, seekBar);
                 }
 
-                @Override public void onStartTrackingTouch(SeekBar seekBar) {
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
 
                 }
 
-                @Override public void onStopTrackingTouch(SeekBar seekBar) {
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
 
                 }
             });
@@ -87,13 +94,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private Runnable unsetIgnoreRequests = new Runnable() {
+        @Override
+        public void run() {
+            ignoreRequests = false;
+        }
+    };
+
     private void requireChangeVolume(AudioType audioType, int volume, SeekBar seekBar) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
                 !notificationManager.isNotificationPolicyAccessGranted()) {
+            mHandler.postDelayed(unsetIgnoreRequests, 1000);
+            if (!ignoreRequests) {
                 Intent intent = new Intent(
                         android.provider.Settings
                                 .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+
                 startActivity(intent);
+                ignoreRequests = true;
+            }
         } else {
             try {
                 control.setVolumeLevel(audioType.audioStreamName, volume);
@@ -106,16 +125,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override protected void onStart() {
+    @Override
+    protected void onStart() {
         super.onStart();
         for (TypeListener listener : volumeListeners)
             control.registerVolumeListener(listener.type, listener, true);
     }
 
-    @Override protected void onStop() {
+    @Override
+    protected void onStop() {
         super.onStop();
         for (TypeListener volumeListener : volumeListeners)
             control.unRegisterVolumeListener(volumeListener.type, volumeListener);
+        ignoreRequests = false;
+        mHandler.removeCallbacks(unsetIgnoreRequests);
     }
 
     @Override
