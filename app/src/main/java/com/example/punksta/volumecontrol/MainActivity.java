@@ -43,17 +43,25 @@ public class MainActivity extends AppCompatActivity {
 
             title.setText(type.displayName);
 
+
             seekBar.setMax(control.getMaxLevel(type.audioStreamName));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                seekBar.setMin(control.getMinLevel(type.audioStreamName));
+            }
             seekBar.setProgress(control.getLevel(type.audioStreamName));
 
             final TypeListener volumeListener = new TypeListener(type.audioStreamName) {
                 @Override public void onChangeIndex(int audioType, int currentLevel, int max) {
-                    String str = "" + currentLevel + "/" + max;
-                    currentValue.setText(str);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                        seekBar.setProgress(currentLevel, true);
-                    else
-                        seekBar.setProgress(currentLevel);
+                    if (currentLevel < control.getMinLevel(type)) {
+                        seekBar.setProgress(control.getMinLevel(type));
+                    } else {
+                        String str = "" + (currentLevel - control.getMinLevel(type)) + "/" + (max - control.getMinLevel(type));
+                        currentValue.setText(str);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                            seekBar.setProgress(currentLevel, true);
+                        else
+                            seekBar.setProgress(currentLevel);
+                    }
                 }
             };
 
