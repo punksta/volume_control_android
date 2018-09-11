@@ -42,15 +42,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void buildUi() {
         LinearLayout scrollView = (LinearLayout) findViewById(R.id.audio_types_holder);
-
+        scrollView.removeAllViews();
         LayoutInflater inflater = getLayoutInflater();
 
         for (final AudioType type : AudioType.values()) {
             View view = inflater.inflate(R.layout.audiu_type_view, scrollView, false);
+            view.setId(View.NO_ID);
             final TextView title = (TextView) view.findViewById(R.id.title);
             final TextView currentValue = (TextView) view.findViewById(R.id.current_value);
             final SeekBar seekBar = (SeekBar) view.findViewById(R.id.seek_bar);
 
+            seekBar.setId(View.NO_ID);
             title.setText(type.displayName);
 
 
