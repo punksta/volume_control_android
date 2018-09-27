@@ -96,6 +96,12 @@ public class VolumeControl {
         void onChangeIndex(int autodioStream, int currentLevel, int max);
     }
 
+    public void onSilenceModeRequested(int... types) {
+       for (int type: types) {
+           mediaManager.setStreamVolume(type, getMinLevel(type), 0);
+       }
+    }
+
     private class AudioObserver extends BroadcastReceiver {
 
 

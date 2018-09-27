@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">VolumeControl</string>
+    <string name="main_menu.silence">silence</string>
 </resources>

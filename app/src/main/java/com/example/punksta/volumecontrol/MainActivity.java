@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -83,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    requireChangeVolume(type, progress, seekBar);
+                    requireChangeVolume(type, progress);
                 }
 
                 @Override
@@ -109,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void requireChangeVolume(AudioType audioType, int volume, SeekBar seekBar) {
+    private void requireChangeVolume(AudioType audioType, int volume) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
                 !notificationManager.isNotificationPolicyAccessGranted()) {
             mHandler.postDelayed(unsetIgnoreRequests, 1000);
@@ -127,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (Throwable throwable) {
                 Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                 throwable.printStackTrace();
-                seekBar.setProgress(control.getLevel(audioType.audioStreamName));
             }
         }
     }
@@ -163,5 +165,30 @@ public class MainActivity extends AppCompatActivity {
         protected TypeListener(int type) {
             this.type = type;
         }
+    }
+
+
+    private void onSilenceModeRequested() {
+        for (AudioType a: AudioType.values()) {
+            requireChangeVolume(a, control.getMinLevel(a.audioStreamName));
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.main_menu_silence:
+                onSilenceModeRequested();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_screen, menu);
+        return true;
     }
 }
