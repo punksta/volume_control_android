@@ -1,11 +1,11 @@
 package com.example.punksta.volumecontrol;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,7 +22,7 @@ import com.punksta.apps.libs.VolumeControl;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private VolumeControl control;
     private List<TypeListener> volumeListeners = new ArrayList<>();
@@ -44,16 +44,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buildUi() {
-        LinearLayout scrollView = (LinearLayout) findViewById(R.id.audio_types_holder);
+        LinearLayout scrollView = findViewById(R.id.audio_types_holder);
         scrollView.removeAllViews();
         LayoutInflater inflater = getLayoutInflater();
 
         for (final AudioType type : AudioType.values()) {
             View view = inflater.inflate(R.layout.audiu_type_view, scrollView, false);
             view.setId(View.NO_ID);
-            final TextView title = (TextView) view.findViewById(R.id.title);
-            final TextView currentValue = (TextView) view.findViewById(R.id.current_value);
-            final SeekBar seekBar = (SeekBar) view.findViewById(R.id.seek_bar);
+            final TextView title = view.findViewById(R.id.title);
+            final TextView currentValue =  view.findViewById(R.id.current_value);
+            final SeekBar seekBar = view.findViewById(R.id.seek_bar);
 
             seekBar.setId(View.NO_ID);
             title.setText(type.displayName);
