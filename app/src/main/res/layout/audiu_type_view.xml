@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"/>
 
 
+
     <TextView
         tools:text="100%"
         android:textSize="@dimen/title_size"
@@ -28,6 +29,8 @@
         android:layout_toEndOf="@+id/title"
         android:layout_marginStart="8dp"/>
 
+
+
     <SeekBar
         android:layout_marginTop="5dp"
         android:id="@+id/seek_bar"
@@ -35,5 +38,23 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/title" />
 
+
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="16dp"
+        android:id="@+id/vibrate_text"
+        android:text="vibrate?"
+        android:layout_below="@+id/seek_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Spinner
+        android:layout_marginBottom="4dp"
+        android:entries="@array/vibrate_settings"
+        android:id="@+id/vibrate_level"
+        android:layout_toRightOf="@+id/vibrate_text"
+        android:layout_alignBaseline="@+id/vibrate_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Bundle;
@@ -12,8 +13,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +46,12 @@ public class MainActivity extends Activity {
         buildUi();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //skip
+    }
+
+
     private void buildUi() {
         LinearLayout scrollView = findViewById(R.id.audio_types_holder);
         scrollView.removeAllViews();
@@ -50,14 +59,11 @@ public class MainActivity extends Activity {
 
         for (final AudioType type : AudioType.values()) {
             View view = inflater.inflate(R.layout.audiu_type_view, scrollView, false);
-            view.setId(View.NO_ID);
             final TextView title = view.findViewById(R.id.title);
-            final TextView currentValue =  view.findViewById(R.id.current_value);
+            final TextView currentValue = view.findViewById(R.id.current_value);
             final SeekBar seekBar = view.findViewById(R.id.seek_bar);
 
-            seekBar.setId(View.NO_ID);
             title.setText(type.displayName);
-
 
             seekBar.setMax(control.getMaxLevel(type.audioStreamName));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -100,10 +106,53 @@ public class MainActivity extends Activity {
                 }
             });
 
+            if (type.vibrateSettings != null) {
+                view.<Spinner>findViewById(R.id.vibrate_level).setSelection(vibrateSettingToPosition(control.getVibrateType(type.vibrateSettings)));
+                view.<Spinner>findViewById(R.id.vibrate_level).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        int setting = vibrateSettingToValue(position);
+                        control.setVibrateSettings(type.vibrateSettings, setting);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+            } else {
+                view.findViewById(R.id.vibrate_text).setVisibility(View.GONE);
+                view.findViewById(R.id.vibrate_level).setVisibility(View.GONE);
+            }
+
             scrollView.addView(view);
         }
     }
 
+    static int vibrateSettingToValue(int position) {
+        switch (position) {
+            case 1:
+                return AudioManager.VIBRATE_SETTING_OFF;
+            case 2:
+                return AudioManager.VIBRATE_SETTING_ONLY_SILENT;
+            default:
+            case 0:
+                return AudioManager.VIBRATE_SETTING_ON;
+        }
+    }
+
+
+    static int vibrateSettingToPosition(int setting) {
+        switch (setting) {
+            case AudioManager.VIBRATE_SETTING_OFF:
+                return 1;
+            case AudioManager.VIBRATE_SETTING_ONLY_SILENT:
+                return 2;
+            default:
+            case AudioManager.VIBRATE_SETTING_ON:
+                return 0;
+        }
+    }
 
     private Runnable unsetIgnoreRequests = new Runnable() {
         @Override
@@ -133,7 +182,6 @@ public class MainActivity extends Activity {
             }
         }
     }
-
 
 
     @Override
@@ -169,8 +217,15 @@ public class MainActivity extends Activity {
 
 
     private void onSilenceModeRequested() {
-        for (AudioType a: AudioType.values()) {
+        for (AudioType a : AudioType.values()) {
             requireChangeVolume(a, control.getMinLevel(a.audioStreamName));
+        }
+    }
+
+
+    private void onFullVolumeModeRequested() {
+        for (AudioType a : AudioType.values()) {
+            requireChangeVolume(a, control.getMaxLevel(a.audioStreamName));
         }
     }
 
@@ -179,6 +234,9 @@ public class MainActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.main_menu_silence:
                 onSilenceModeRequested();
+                return true;
+            case R.id.main_menu_full_volume:
+                onFullVolumeModeRequested();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

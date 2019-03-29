@@ -42,6 +42,13 @@ public class VolumeControl {
         intentFilter.addAction("android.media.EXTRA_VIBRATE_SETTING");
     }
 
+    public int getVibrateType(int vibrateType) {
+       return mediaManager.getVibrateSetting(vibrateType);
+    }
+
+    public void setVibrateSettings(int vibrateType, int vibrateSettings) {
+        mediaManager.setVibrateSetting(vibrateType, vibrateSettings);
+    }
 
     public void setVolumeLevel(int type, int index) {
         mediaManager.setStreamVolume(type, index, 0);
