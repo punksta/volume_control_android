@@ -4,6 +4,12 @@
         android:icon="@android:drawable/ic_lock_silent_mode"
         android:title="@string/main_menu.silence" />
 
+
+    <item android:id="@+id/main_menu.vibrate"
+        android:icon="@drawable/ic_action_name"
+        android:visible="false"
+        android:title="@string/main_menu.silence_off" />
+
     <item android:id="@+id/main_menu.full_volume"
         android:icon="@android:drawable/ic_lock_silent_mode_off"
         android:title="@string/main_menu.silence_off" />

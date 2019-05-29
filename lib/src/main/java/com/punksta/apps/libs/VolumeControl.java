@@ -36,6 +36,7 @@ public class VolumeControl {
 
         intentFilter = new IntentFilter();
         intentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
+        intentFilter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION);
         intentFilter.addAction("android.media.STREAM_MUTE_CHANGED_ACTION");
         intentFilter.addAction("android.media.RINGER_MODE_CHANGED");
         intentFilter.addAction("android.media.EXTRA_VIBRATE_SETTING");
@@ -103,10 +104,12 @@ public class VolumeControl {
         void onChangeIndex(int autodioStream, int currentLevel, int max);
     }
 
-    public void onSilenceModeRequested(int... types) {
-       for (int type: types) {
-           mediaManager.setStreamVolume(type, getMinLevel(type), 0);
-       }
+    public void requestRindgerMode(int ringerMode) {
+        mediaManager.setRingerMode(ringerMode);
+    }
+
+    public int getRingerMode() {
+        return mediaManager.getRingerMode();
     }
 
     private class AudioObserver extends BroadcastReceiver {

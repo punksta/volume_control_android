@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme">
+    <style name="AppTheme" parent="android:ThemeOverlay.Material.Light">
         <!-- Customize your theme here. -->
         <item name="android:colorPrimary">@color/colorPrimary</item>
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.Dark" parent="android:ThemeOverlay.Material.Dark">
+        <!-- Customize your theme here. -->
+        <item name="android:background">@color/background_dark</item>
+        <item name="android:colorPrimary">@color/colorPrimary_dark</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark_dark</item>
+        <item name="android:colorAccent">@color/colorAccent_dark</item>
     </style>
 </resources>

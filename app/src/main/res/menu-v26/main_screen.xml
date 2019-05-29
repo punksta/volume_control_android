@@ -6,6 +6,15 @@
         android:icon="@android:drawable/ic_lock_silent_mode"
         android:title="@string/main_menu.silence" />
 
+
+    <item android:id="@+id/main_menu.vibrate"
+        android:showAsAction="ifRoom"
+        android:iconTint="#fff"
+        android:visible="false"
+        android:icon="@drawable/ic_action_name"
+        android:title="@string/main_menu.silence_off" />
+
+
     <item android:id="@+id/main_menu.full_volume"
         android:iconTint="#fff"
         android:showAsAction="ifRoom"

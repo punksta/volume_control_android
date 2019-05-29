@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Bundle;
@@ -14,9 +16,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,15 +39,32 @@ public class MainActivity extends Activity {
     private boolean ignoreRequests = false;
     private Handler mHandler = new Handler();
 
+    private SharedPreferences preferences;
+    private boolean darkTheme = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        preferences = getPreferences(MODE_PRIVATE);
+        this.darkTheme = preferences.getBoolean("DARK_THEME", false);
+
+
+        setTheme(  this.darkTheme ? R.style.AppTheme_Dark : R.style.AppTheme);
         setContentView(R.layout.activity_main);
+
 
         control = new VolumeControl(this.getApplicationContext(), mHandler);
 
         buildUi();
+    }
+
+
+
+
+
+    private void goToMarket() {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
     }
 
     @Override
@@ -56,6 +77,32 @@ public class MainActivity extends Activity {
         LinearLayout scrollView = findViewById(R.id.audio_types_holder);
         scrollView.removeAllViews();
         LayoutInflater inflater = getLayoutInflater();
+
+
+        Switch s = findViewById(R.id.dark_theme_switcher);
+
+        s.setChecked(this.darkTheme);
+        s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.this.darkTheme = isChecked;
+                preferences.edit().putBoolean("DARK_THEME", isChecked).apply();
+                setTheme(isChecked ? R.style.AppTheme_Dark : R.style.AppTheme);
+                finish();
+                startActivity(getIntent());
+            }
+        });
+
+        findViewById(R.id.rate_app).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    goToMarket();
+                } catch (Throwable e) {
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         for (final AudioType type : AudioType.values()) {
             View view = inflater.inflate(R.layout.audiu_type_view, scrollView, false);
@@ -107,6 +154,8 @@ public class MainActivity extends Activity {
             });
 
             if (type.vibrateSettings != null) {
+                view.findViewById(R.id.vibrate_text).setVisibility(View.GONE);
+                view.findViewById(R.id.vibrate_level).setVisibility(View.GONE);
                 view.<Spinner>findViewById(R.id.vibrate_level).setSelection(vibrateSettingToPosition(control.getVibrateType(type.vibrateSettings)));
                 view.<Spinner>findViewById(R.id.vibrate_level).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
@@ -220,6 +269,8 @@ public class MainActivity extends Activity {
         for (AudioType a : AudioType.values()) {
             requireChangeVolume(a, control.getMinLevel(a.audioStreamName));
         }
+       // control.requestRindgerMode(AudioManager.RINGER_MODE_SILENT);
+
     }
 
 
@@ -227,7 +278,19 @@ public class MainActivity extends Activity {
         for (AudioType a : AudioType.values()) {
             requireChangeVolume(a, control.getMaxLevel(a.audioStreamName));
         }
+        // control.requestRindgerMode(AudioManager.RINGER_MODE_NORMAL);
+
     }
+
+
+    private void onVibrateModeRequested() {
+        for (AudioType a : AudioType.values()) {
+            requireChangeVolume(a, control.getMinLevel(a.audioStreamName));
+        }
+        // control.requestRindgerMode(AudioManager.RINGER_MODE_VIBRATE);
+
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -237,6 +300,9 @@ public class MainActivity extends Activity {
                 return true;
             case R.id.main_menu_full_volume:
                 onFullVolumeModeRequested();
+                return true;
+            case R.id.main_menu_vibrate:
+                onVibrateModeRequested();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

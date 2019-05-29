@@ -4,14 +4,9 @@
     <string name="main_menu.silence_off" translatable="false">full volume</string>
 
 
-    <!--{@link #VIBRATE_SETTING_ON},-->
-    <!--*            {@link #VIBRATE_SETTING_OFF}, or-->
-    <!--*            {@link #VIBRATE_SETTING_ONLY_SILENT}.-->
-
     <string-array name="vibrate_settings">
         <item>Always on</item>
         <item>Always off</item>
         <item>Only in silent mode</item>
     </string-array>
-
 </resources>
