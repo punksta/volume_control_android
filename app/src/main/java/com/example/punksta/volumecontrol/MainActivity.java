@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,18 +45,13 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         preferences = getPreferences(MODE_PRIVATE);
         this.darkTheme = preferences.getBoolean("DARK_THEME", false);
-
-
         setTheme(  this.darkTheme ? R.style.AppTheme_Dark : R.style.AppTheme);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         control = new VolumeControl(this.getApplicationContext(), mHandler);
-
         buildUi();
     }
 
@@ -72,6 +68,10 @@ public class MainActivity extends Activity {
         //skip
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        //skip
+    }
 
     private void buildUi() {
         LinearLayout scrollView = findViewById(R.id.audio_types_holder);
@@ -88,8 +88,7 @@ public class MainActivity extends Activity {
                 MainActivity.this.darkTheme = isChecked;
                 preferences.edit().putBoolean("DARK_THEME", isChecked).apply();
                 setTheme(isChecked ? R.style.AppTheme_Dark : R.style.AppTheme);
-                finish();
-                startActivity(getIntent());
+                recreate();
             }
         });
 
