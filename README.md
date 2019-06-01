@@ -1,5 +1,5 @@
 # Volume control android
-Simple android app for managing volue levels
+Simple android app for managing volume levels
 
 ## details
 - no support library (apk size 64kb)
