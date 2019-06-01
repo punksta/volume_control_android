@@ -1,12 +1,10 @@
 # Volume control android
-Managing volume level of different audio streams and listen volume changes from it.
+Simple android app for managing volue levels
 
-## lib
-[VolumeControl]
-(https://github.com/punksta/volume_control_android/blob/master/lib/src/main/java/com/punksta/apps/libs/VolumeControl.java) - class - wrapper over android AudioManager allowing to listen volume chaches
+## details
+- no support library (apk size 64kb)
+- as simple as can be (back to 2010's architecture)
+- with dark theme
 
 
-## app
-Example of using
-
-![screenshot](https://github.com/punksta/volume_control_android/blob/master/Screenshot_20160619-190023.png)
+download apk from google play: https://play.google.com/store/apps/details?id=com.punksta.apps.volumecontrol
