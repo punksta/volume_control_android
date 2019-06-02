@@ -11,20 +11,17 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.punksta.volumecontrol.view.VolumeSliderView;
 import com.punksta.apps.libs.VolumeControl;
 
 import java.util.ArrayList;
@@ -58,9 +55,6 @@ public class MainActivity extends Activity {
     }
 
 
-
-
-
     private void goToMarket() {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
     }
@@ -78,7 +72,6 @@ public class MainActivity extends Activity {
     private void buildUi() {
         LinearLayout scrollView = findViewById(R.id.audio_types_holder);
         scrollView.removeAllViews();
-        LayoutInflater inflater = getLayoutInflater();
 
 
         Switch s = findViewById(R.id.dark_theme_switcher);
@@ -106,76 +99,39 @@ public class MainActivity extends Activity {
         });
 
         for (final AudioType type : AudioType.values()) {
-            View view = inflater.inflate(R.layout.audiu_type_view, scrollView, false);
-            final TextView title = view.findViewById(R.id.title);
-            final TextView currentValue = view.findViewById(R.id.current_value);
-            final SeekBar seekBar = view.findViewById(R.id.seek_bar);
 
-            title.setText(type.displayName);
+            final VolumeSliderView volumeSliderView = new VolumeSliderView(this);
 
-            seekBar.setMax(control.getMaxLevel(type.audioStreamName));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                seekBar.setMin(control.getMinLevel(type.audioStreamName));
-            }
-            seekBar.setProgress(control.getLevel(type.audioStreamName));
+            scrollView.addView(volumeSliderView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            volumeSliderView.setVolumeName(type.displayName);
+            volumeSliderView.setMaxVolume(control.getMaxLevel(type.audioStreamName));
+            volumeSliderView.setMinVolume(control.getMinLevel(type.audioStreamName));
+            volumeSliderView.setCurrentVolume(control.getLevel(type.audioStreamName));
+
 
             final TypeListener volumeListener = new TypeListener(type.audioStreamName) {
                 @Override
                 public void onChangeIndex(int audioType, int currentLevel, int max) {
                     if (currentLevel < control.getMinLevel(type)) {
-                        seekBar.setProgress(control.getMinLevel(type));
+                        volumeSliderView.setCurrentVolume(control.getMinLevel(type));
                     } else {
-                        String str = "" + (currentLevel - control.getMinLevel(type)) + "/" + (max - control.getMinLevel(type));
-                        currentValue.setText(str);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                            seekBar.setProgress(currentLevel, true);
-                        else
-                            seekBar.setProgress(currentLevel);
+                       volumeSliderView.setCurrentVolume(currentLevel);
                     }
                 }
             };
 
             volumeListeners.add(volumeListener);
 
-            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            volumeSliderView.setListener(new VolumeSliderView.VolumeSliderChangeListener() {
                 @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    requireChangeVolume(type, progress);
-                }
+                public void onChange(int volume, boolean fromUser) {
+                    if (fromUser) {
+                        requireChangeVolume(type, volume);
 
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-
+                    }
                 }
             });
-
-            if (type.vibrateSettings != null) {
-                view.findViewById(R.id.vibrate_text).setVisibility(View.GONE);
-                view.findViewById(R.id.vibrate_level).setVisibility(View.GONE);
-                view.<Spinner>findViewById(R.id.vibrate_level).setSelection(vibrateSettingToPosition(control.getVibrateType(type.vibrateSettings)));
-                view.<Spinner>findViewById(R.id.vibrate_level).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        int setting = vibrateSettingToValue(position);
-                        control.setVibrateSettings(type.vibrateSettings, setting);
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-            } else {
-                view.findViewById(R.id.vibrate_text).setVisibility(View.GONE);
-                view.findViewById(R.id.vibrate_level).setVisibility(View.GONE);
-            }
-
-            scrollView.addView(view);
         }
     }
 
@@ -257,7 +213,7 @@ public class MainActivity extends Activity {
         volumeListeners.clear();
     }
 
-    private abstract class TypeListener implements VolumeControl.VolumeListener {
+    public static abstract class TypeListener implements VolumeControl.VolumeListener {
         public final int type;
 
         protected TypeListener(int type) {
