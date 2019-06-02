@@ -43,14 +43,16 @@ public class MainActivity extends Activity {
     private SharedPreferences preferences;
     private boolean darkTheme = false;
 
+
+    private static String THEME_PREF_NAME = "DARK_THEME";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        preferences = getPreferences(MODE_PRIVATE);
-        this.darkTheme = preferences.getBoolean("DARK_THEME", false);
-        setTheme(  this.darkTheme ? R.style.AppTheme_Dark : R.style.AppTheme);
         super.onCreate(savedInstanceState);
+        preferences = getPreferences(MODE_PRIVATE);
+        this.darkTheme = preferences.getBoolean(THEME_PREF_NAME, false);
+        setTheme(  this.darkTheme ? R.style.AppTheme_Dark : R.style.AppTheme);
         setContentView(R.layout.activity_main);
-
         control = new VolumeControl(this.getApplicationContext(), mHandler);
         buildUi();
     }
@@ -86,7 +88,7 @@ public class MainActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 MainActivity.this.darkTheme = isChecked;
-                preferences.edit().putBoolean("DARK_THEME", isChecked).apply();
+                preferences.edit().putBoolean(THEME_PREF_NAME, isChecked).apply();
                 setTheme(isChecked ? R.style.AppTheme_Dark : R.style.AppTheme);
                 recreate();
             }
