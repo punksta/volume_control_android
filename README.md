@@ -10,7 +10,7 @@ Simple android app for managing volume levels
 - keep minimal app size, only required features, no-ads.
 - publish app to fdroid
 - next release features https://github.com/punksta/volume_control_android/projects/1
-- target goal is make best android opensource volume manager app
+- the goal is to make best android open source volume manager app
 
 ## download apk
 - google play: https://play.google.com/store/apps/details?id=com.punksta.apps.volumecontrol
