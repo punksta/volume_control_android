@@ -14,4 +14,5 @@ Simple android app for managing volume levels
 
 ## download apk
 - google play: https://play.google.com/store/apps/details?id=com.punksta.apps.volumecontrol
-- from releases https://github.com/punksta/volume_control_android/releases
+- releases https://github.com/punksta/volume_control_android/releases
+- fdroid [@IzzySoft](https://github.com/IzzySoft)'s repo https://apt.izzysoft.de/fdroid/index/apk/com.punksta.apps.volumecontrol
