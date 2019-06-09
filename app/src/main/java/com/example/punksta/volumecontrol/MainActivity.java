@@ -1,16 +1,13 @@
 package com.example.punksta.volumecontrol;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,9 +24,8 @@ import com.punksta.apps.libs.VolumeControl;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 
-    private VolumeControl control;
     private List<TypeListener> volumeListeners = new ArrayList<>();
     private NotificationManager notificationManager;
 
@@ -37,36 +33,17 @@ public class MainActivity extends Activity {
     private boolean ignoreRequests = false;
     private Handler mHandler = new Handler();
 
-    private SharedPreferences preferences;
-    private boolean darkTheme = false;
-
-
-    private static String THEME_PREF_NAME = "DARK_THEME";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = getPreferences(MODE_PRIVATE);
-        this.darkTheme = preferences.getBoolean(THEME_PREF_NAME, false);
-        setTheme(  this.darkTheme ? R.style.AppTheme_Dark : R.style.AppTheme);
         setContentView(R.layout.activity_main);
-        control = new VolumeControl(this.getApplicationContext(), mHandler);
         buildUi();
     }
 
 
     private void goToMarket() {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        //skip
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        //skip
     }
 
     private void buildUi() {
@@ -76,14 +53,11 @@ public class MainActivity extends Activity {
 
         Switch s = findViewById(R.id.dark_theme_switcher);
 
-        s.setChecked(this.darkTheme);
+        s.setChecked(isDarkTheme());
         s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                MainActivity.this.darkTheme = isChecked;
-                preferences.edit().putBoolean(THEME_PREF_NAME, isChecked).apply();
-                setTheme(isChecked ? R.style.AppTheme_Dark : R.style.AppTheme);
-                recreate();
+               setThemeAndRecreate(isChecked);
             }
         });
 
@@ -98,10 +72,17 @@ public class MainActivity extends Activity {
             }
         });
 
+        findViewById(R.id.new_profile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, EditProfileActivity.class));
+            }
+        });
         for (final AudioType type : AudioType.values()) {
 
             final VolumeSliderView volumeSliderView = new VolumeSliderView(this);
 
+            volumeSliderView.setId(type.audioStreamName);
             scrollView.addView(volumeSliderView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
             volumeSliderView.setVolumeName(type.displayName);
@@ -128,7 +109,6 @@ public class MainActivity extends Activity {
                 public void onChange(int volume, boolean fromUser) {
                     if (fromUser) {
                         requireChangeVolume(type, volume);
-
                     }
                 }
             });
@@ -213,10 +193,10 @@ public class MainActivity extends Activity {
         volumeListeners.clear();
     }
 
-    public static abstract class TypeListener implements VolumeControl.VolumeListener {
-        public final int type;
+    static abstract class TypeListener implements VolumeControl.VolumeListener {
+        final int type;
 
-        protected TypeListener(int type) {
+        TypeListener(int type) {
             this.type = type;
         }
     }

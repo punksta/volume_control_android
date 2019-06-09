@@ -1,12 +1,24 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light">
+    <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar">
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="AppTheme.Dark" parent="android:Theme.Holo">
+    <style name="AppTheme.Dark" parent="android:Theme.Holo.NoActionBar">
         <!-- Customize your theme here. -->
+    </style>
+    
+    <style name="MainScreen_Header">
+        <item name="android:textSize">21sp</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+
+    <style name="VolumeLevel_Title">
+        <item name="android:textSize">14sp</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:textColor">@android:color/secondary_text_light</item>
     </style>
 
 </resources>

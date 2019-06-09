@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.example.punksta.volumecontrol.R;
 
+import static com.example.punksta.volumecontrol.util.PixelUtils.convertDpToPixel;
+
 public class VolumeSliderView  extends FrameLayout {
 
     private TextView mTitle;
@@ -69,7 +71,9 @@ public class VolumeSliderView  extends FrameLayout {
         seekBar = view.findViewById(R.id.seek_bar);
 
         seekBar.setOnSeekBarChangeListener(listener);
+        int padding = (int )convertDpToPixel(10, getContext());
 
+        seekBar.setPadding(padding, 0, padding, 0);
         addView(view);
     }
 
@@ -94,7 +98,11 @@ public class VolumeSliderView  extends FrameLayout {
         } else {
             seekBar.setProgress(progress);
         }
-        mCurrentValue.setText("" + progress + "/" + seekBar.getMax());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mCurrentValue.setText("" + (progress - seekBar.getMin()) + "/" + (seekBar.getMax() - seekBar.getMin()));
+        } else {
+            mCurrentValue.setText("" + progress + "/" + seekBar.getMax());
+        }
     }
 
     public void setListener(VolumeSliderChangeListener volumeListener) {
