@@ -50,7 +50,7 @@ public class SoundProfileStorage {
         preferences.edit().putString("ids", serializeIds(ids)).apply();
     }
 
-    public void saveProfile(SoundProfile profile) throws JSONException {
+    public void saveProfile(SoundProfile profile) {
         boolean found = false;
         for (int id : ids) {
             if (id == profile.id) {
@@ -63,9 +63,21 @@ public class SoundProfileStorage {
             ids.add(profile.id);
             editor.putString("ids", serializeIds(ids));
         }
-        editor.putString(profile.id.toString(), serialize(profile)).apply();
-
+        try {
+            editor.putString(profile.id.toString(), serialize(profile));
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
         editor.apply();
+    }
+
+    public SoundProfile addProfile(String name, Map<Integer, Integer> volumes) {
+        SoundProfile result = new SoundProfile();
+        result.settings = volumes;
+        result.id = this.ids.size() == 0 ? 0 : this.ids.get(this.ids.size() - 1) + 1;
+        result.name = name;
+        saveProfile(result);
+        return result;
     }
 
 

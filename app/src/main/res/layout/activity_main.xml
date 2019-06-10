@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context="com.example.punksta.volumecontrol.MainActivity">
 
 
@@ -21,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Current volume"
-        style="@style/MainScreen_Header"
+        style="@style/ScreenHeader"
         />
 
     <LinearLayout
@@ -33,29 +32,47 @@
         android:layout_height="wrap_content"/>
 
 
-    <TextView
+    <FrameLayout
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+      <TextView
+          android:layout_gravity="left|center_vertical"
+          android:id="@+id/profiles_title_id"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Sound Profiles"
+          style="@style/ScreenHeader"
+          />
+
+      <ImageView
+          android:scaleType="fitCenter"
+          android:layout_gravity="right|center_vertical"
+          android:id="@+id/new_profile"
+          android:layout_width="40dp"
+          android:layout_height="40dp"
+          android:src="@drawable/ic_action_add"
+          android:tint="?attr/themeColorAccent" />
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:animateLayoutChanges="true"
+        android:id="@+id/profile_list"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Volumes"
-        style="@style/MainScreen_Header"
-        />
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/new_profile"
-        android:layout_margin="8dp"
-        android:gravity="center"
-        android:text="new profile"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content" />
 
+    </LinearLayout>
 
     <TextView
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Settings"
-        style="@style/MainScreen_Header"
+        style="@style/ScreenHeader"
         />
 
     <LinearLayout
@@ -75,7 +92,7 @@
           android:layout_margin="8dp"
 
           android:text="Rate app"
-          android:layout_width="200dp"
+          android:layout_width="wrap_content"
           android:layout_height="wrap_content" />
 
 

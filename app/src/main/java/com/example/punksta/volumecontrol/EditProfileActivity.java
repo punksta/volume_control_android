@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -21,7 +22,6 @@ public class EditProfileActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
-
         buildUi();
     }
 
@@ -51,6 +51,14 @@ public class EditProfileActivity extends BaseActivity {
                     }
                 }
             });
+
+            findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    requiredSave();
+
+                }
+            });
         }
     }
 
@@ -64,20 +72,6 @@ public class EditProfileActivity extends BaseActivity {
         finish();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.edit_profile_save) {
-            requiredSave();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
+    public static final int REQUEST_CODE_NEW_PROFILE = 0;
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.edit_profile, menu);
-        return true;
-    }
 }

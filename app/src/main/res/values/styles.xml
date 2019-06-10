@@ -7,10 +7,16 @@
 
     <style name="AppTheme.Dark" parent="android:Theme.Holo.NoActionBar">
         <!-- Customize your theme here. -->
+
     </style>
     
-    <style name="MainScreen_Header">
+    <style name="ScreenHeader">
         <item name="android:textSize">21sp</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="ScreenSubHeader">
+        <item name="android:textSize">18sp</item>
         <item name="android:typeface">sans</item>
     </style>
 
@@ -18,7 +24,6 @@
     <style name="VolumeLevel_Title">
         <item name="android:textSize">14sp</item>
         <item name="android:typeface">sans</item>
-        <item name="android:textColor">@android:color/secondary_text_light</item>
     </style>
 
 </resources>

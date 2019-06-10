@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="AppTheme" parent="android:ThemeOverlay.Material.Light">
         <!-- Customize your theme here. -->
-        <item name="android:colorPrimary">@color/colorPrimary</item>
-        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:colorAccent">@color/colorAccent</item>
-        <item name="android:textColor">#000</item>
+        <item name="android:colorPrimary">@color/colorPrimary_light</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark_light</item>
+        <item name="android:colorAccent">@color/colorAccent_light</item>
+        <item name="themeColorAccent">@color/colorAccent_light</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.Dark" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="AppTheme.Dark" parent="android:ThemeOverlay.Material.Dark">
         <!-- Customize your theme here. -->
         <item name="android:background">@color/background_dark</item>
         <item name="android:colorPrimary">@color/colorPrimary_dark</item>
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark_dark</item>
         <item name="android:colorAccent">@color/colorAccent_dark</item>
-        <item name="android:textColor">#fff</item>
+        <item name="themeColorAccent">@color/colorAccent_dark</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 </resources>

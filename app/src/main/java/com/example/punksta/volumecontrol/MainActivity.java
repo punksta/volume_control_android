@@ -1,5 +1,6 @@
 package com.example.punksta.volumecontrol;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -18,26 +19,34 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.example.punksta.volumecontrol.data.SoundProfile;
+import com.example.punksta.volumecontrol.util.ProfileApplier;
+import com.example.punksta.volumecontrol.util.SoundProfileStorage;
+import com.example.punksta.volumecontrol.view.VolumeProfileView;
 import com.example.punksta.volumecontrol.view.VolumeSliderView;
 import com.punksta.apps.libs.VolumeControl;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import static com.example.punksta.volumecontrol.EditProfileActivity.REQUEST_CODE_NEW_PROFILE;
 
 public class MainActivity extends BaseActivity {
 
     private List<TypeListener> volumeListeners = new ArrayList<>();
     private NotificationManager notificationManager;
-
-
     private boolean ignoreRequests = false;
     private Handler mHandler = new Handler();
-
+    private SoundProfileStorage profileStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        profileStorage = new SoundProfileStorage(preferences);
         buildUi();
     }
 
@@ -57,7 +66,7 @@ public class MainActivity extends BaseActivity {
         s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               setThemeAndRecreate(isChecked);
+                setThemeAndRecreate(isChecked);
             }
         });
 
@@ -75,7 +84,7 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.new_profile).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, EditProfileActivity.class));
+                startActivityForResult(new Intent(MainActivity.this, EditProfileActivity.class), REQUEST_CODE_NEW_PROFILE);
             }
         });
         for (final AudioType type : AudioType.values()) {
@@ -97,7 +106,7 @@ public class MainActivity extends BaseActivity {
                     if (currentLevel < control.getMinLevel(type)) {
                         volumeSliderView.setCurrentVolume(control.getMinLevel(type));
                     } else {
-                       volumeSliderView.setCurrentVolume(currentLevel);
+                        volumeSliderView.setCurrentVolume(currentLevel);
                     }
                 }
             };
@@ -127,6 +136,53 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+
+    private void renderProfile(final SoundProfile profile) {
+        final LinearLayout profiles = findViewById(R.id.profile_list);
+        final VolumeProfileView view = new VolumeProfileView(this);
+        view.setProfileTitle(profile.name);
+        view.setOnActivateClickListener(new Runnable() {
+            @Override
+            public void run() {
+                ProfileApplier.applyProfile(control, profile);
+            }
+        });
+        view.setOnEditClickListener(new Runnable() {
+            @Override
+            public void run() {
+              profileStorage.removeProfile(profile.id);
+              profiles.removeView(view);
+            }
+        });
+        profiles.addView(view,
+                new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+        );
+    }
+
+    private void renderProfiles() throws JSONException {
+        LinearLayout profiles = findViewById(R.id.profile_list);
+        profiles.removeAllViews();
+
+        for (final SoundProfile profile : profileStorage.loadAll()) {
+          renderProfile(profile);
+        }
+
+    }
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            renderProfiles();
+        } catch (JSONException e) {
+           throw new RuntimeException(e);
+        }
+    }
 
     static int vibrateSettingToPosition(int setting) {
         switch (setting) {
@@ -206,7 +262,7 @@ public class MainActivity extends BaseActivity {
         for (AudioType a : AudioType.values()) {
             requireChangeVolume(a, control.getMinLevel(a.audioStreamName));
         }
-       // control.requestRindgerMode(AudioManager.RINGER_MODE_SILENT);
+        // control.requestRindgerMode(AudioManager.RINGER_MODE_SILENT);
 
     }
 
@@ -243,6 +299,22 @@ public class MainActivity extends BaseActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case EditProfileActivity.REQUEST_CODE_NEW_PROFILE: {
+                if (resultCode == Activity.RESULT_OK) {
+                    HashMap<Integer, Integer> volumes = (HashMap<Integer, Integer>) data.getSerializableExtra("volumes");
+                    String name = data.getStringExtra("name");
+                    SoundProfile profile =  profileStorage.addProfile(name, volumes);
+                    renderProfile(profile);
+                }
+            }
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

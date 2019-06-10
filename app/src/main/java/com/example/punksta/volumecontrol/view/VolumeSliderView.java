@@ -65,7 +65,7 @@ public class VolumeSliderView  extends FrameLayout {
     };
 
     private void init() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.audiu_type_view, this, false);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.audio_type_view, this, false);
         mTitle = view.findViewById(R.id.title);
         mCurrentValue = view.findViewById(R.id.current_value);
         seekBar = view.findViewById(R.id.seek_bar);

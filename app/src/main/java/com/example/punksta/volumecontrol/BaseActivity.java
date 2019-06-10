@@ -13,7 +13,7 @@ abstract public class BaseActivity extends Activity {
     private static String THEME_PREF_NAME = "DARK_THEME";
 
 
-    private SharedPreferences preferences;
+    protected SharedPreferences preferences;
 
     private boolean darkTheme = false;
     protected VolumeControl control;
