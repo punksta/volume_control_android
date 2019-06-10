@@ -2,25 +2,16 @@ package com.example.punksta.volumecontrol.view;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.punksta.volumecontrol.AudioType;
 import com.example.punksta.volumecontrol.R;
 
-import static com.example.punksta.volumecontrol.util.PixelUtils.convertDpToPixel;
 
 
 public class VolumeProfileView extends FrameLayout {
@@ -55,16 +46,6 @@ public class VolumeProfileView extends FrameLayout {
         deleteButton = view.findViewById(R.id.delete_btn);
         activeButton = view.findViewById(R.id.active_btn);
         addView(view);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static RippleDrawable getBackgroundDrawable(int pressedColor, Drawable backgroundDrawable)
-    {
-        return new RippleDrawable(getPressedState(pressedColor), backgroundDrawable, null);
-    }
-
-    public static ColorStateList getPressedState(int pressedColor) {
-        return new ColorStateList(new int[][]{new int[]{}}, new int[]{pressedColor});
     }
 
     public void setOnEditClickListener(final Runnable r) {
