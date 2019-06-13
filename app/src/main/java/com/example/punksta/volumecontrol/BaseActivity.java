@@ -11,11 +11,14 @@ import com.punksta.apps.libs.VolumeControl;
 abstract public class BaseActivity extends Activity {
 
     private static String THEME_PREF_NAME = "DARK_THEME";
+    private static String EXTENDED_PREF_NAME = "EXTENDED_VOLUME_SETTINGS";
 
 
     protected SharedPreferences preferences;
 
     private boolean darkTheme = false;
+    private boolean extendedVolumesEnabled = false;
+
     protected VolumeControl control;
 
 
@@ -25,6 +28,7 @@ abstract public class BaseActivity extends Activity {
 
         preferences =  PreferenceManager.getDefaultSharedPreferences(this);
         this.darkTheme = preferences.getBoolean(THEME_PREF_NAME, false);
+        this.extendedVolumesEnabled = preferences.getBoolean(EXTENDED_PREF_NAME, false);
 
         if (this.darkTheme) {
             setTheme(R.style.AppTheme_Dark);
@@ -38,6 +42,15 @@ abstract public class BaseActivity extends Activity {
     protected void setThemeAndRecreate(boolean isDarkTheme) {
         preferences.edit().putBoolean(THEME_PREF_NAME,  isDarkTheme).apply();
         this.recreate();
+    }
+
+    protected void setExtendedVolumesEnabled(boolean isEnabled) {
+        preferences.edit().putBoolean(EXTENDED_PREF_NAME,  isEnabled).apply();
+        this.recreate();
+    }
+
+    protected boolean isExtendedVolumesEnabled() {
+        return extendedVolumesEnabled;
     }
 
     protected boolean isDarkTheme() {

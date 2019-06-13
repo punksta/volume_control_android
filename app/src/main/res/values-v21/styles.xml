@@ -21,4 +21,29 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
     </style>
+
+    <style name="ScreenHeader">
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Headline</item>
+    </style>
+
+    <style name="ScreenSubHeader">
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Subhead</item>
+    </style>
+
+
+    <style name="VolumeLevel_Title">
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Medium</item>
+    </style>
+
+    <style name="VolumeProfile_Title">
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Medium</item>
+    </style>
+
+    <style name="VolumeProfile_Button"  parent="android:Widget.Material.Button.Borderless.Colored">
+
+    </style>
+
+    <style name="Settings_button" parent="android:Widget.Material.Button.Borderless.Colored">
+
+    </style>
 </resources>

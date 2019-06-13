@@ -22,6 +22,7 @@ public class VolumeControl {
     private final Context context;
 
     private final Map<Integer, Set<VolumeListener>> listenerSet = new HashMap<>();
+    private final Set<RingerModeChangelistener> ringerModeListeners = new HashSet<>();
 
     private final IntentFilter intentFilter;
     private AudioObserver audioObserver = new AudioObserver();
@@ -43,16 +44,14 @@ public class VolumeControl {
         intentFilter.addAction("android.media.EXTRA_VIBRATE_SETTING");
     }
 
-    public int getVibrateType(int vibrateType) {
-       return mediaManager.getVibrateSetting(vibrateType);
-    }
 
-    public void setVibrateSettings(int vibrateType, int vibrateSettings) {
-        mediaManager.setVibrateSetting(vibrateType, vibrateSettings);
-    }
 
     public void setVolumeLevel(int type, int index) {
         mediaManager.setStreamVolume(type, index, 0);
+    }
+
+    public void addOnRingerModeListener(RingerModeChangelistener l) {
+        ringerModeListeners.add(l);
     }
 
     public int getMaxLevel(int type) {
@@ -104,6 +103,10 @@ public class VolumeControl {
         void onChangeIndex(int autodioStream, int currentLevel, int max);
     }
 
+    public interface RingerModeChangelistener {
+        void onChange(int mode);
+    }
+
     public void requestRindgerMode(int ringerMode) {
         mediaManager.setRingerMode(ringerMode);
     }
@@ -132,6 +135,9 @@ public class VolumeControl {
                 Integer current = getLevel(entry.getKey());
                 notifyListeners(entry.getKey(), current);
             }
+            for (RingerModeChangelistener ringerModeListener : ringerModeListeners) {
+                ringerModeListener.onChange(getRingerMode());
+            }
         }
 
         private Runnable updateRunnable = new Runnable() {
@@ -149,6 +155,7 @@ public class VolumeControl {
                 handler.postDelayed(updateRunnable, 500);
                 return;
             }
+
             ignoreUpdates = true;
             handler.postDelayed(updateRunnable, 500);
         }

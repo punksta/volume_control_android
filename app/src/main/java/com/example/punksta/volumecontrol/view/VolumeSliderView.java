@@ -69,12 +69,15 @@ public class VolumeSliderView  extends FrameLayout {
         mTitle = view.findViewById(R.id.title);
         mCurrentValue = view.findViewById(R.id.current_value);
         seekBar = view.findViewById(R.id.seek_bar);
-
         seekBar.setOnSeekBarChangeListener(listener);
         int padding = (int )convertDpToPixel(10, getContext());
 
         seekBar.setPadding(padding, 0, padding, 0);
         addView(view);
+    }
+
+    void setDiscrete(boolean isEnabled, int tintColor) {
+        seekBar.setTickMark(getContext().getDrawable(android.R.drawable.ic_notification_overlay));
     }
 
 

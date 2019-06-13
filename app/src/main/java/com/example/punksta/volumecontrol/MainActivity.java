@@ -14,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -22,6 +21,7 @@ import android.widget.Toast;
 import com.example.punksta.volumecontrol.data.SoundProfile;
 import com.example.punksta.volumecontrol.util.ProfileApplier;
 import com.example.punksta.volumecontrol.util.SoundProfileStorage;
+import com.example.punksta.volumecontrol.view.RingerModeSwitch;
 import com.example.punksta.volumecontrol.view.VolumeProfileView;
 import com.example.punksta.volumecontrol.view.VolumeSliderView;
 import com.punksta.apps.libs.VolumeControl;
@@ -51,6 +51,10 @@ public class MainActivity extends BaseActivity {
     }
 
 
+    private void goToVolumeSettings() {
+        startActivity(new Intent(android.provider.Settings.ACTION_SOUND_SETTINGS));
+    }
+
     private void goToMarket() {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
     }
@@ -59,35 +63,29 @@ public class MainActivity extends BaseActivity {
         LinearLayout scrollView = findViewById(R.id.audio_types_holder);
         scrollView.removeAllViews();
 
-
         Switch s = findViewById(R.id.dark_theme_switcher);
 
         s.setChecked(isDarkTheme());
-        s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setThemeAndRecreate(isChecked);
+        s.setOnCheckedChangeListener((buttonView, isChecked) -> setThemeAndRecreate(isChecked));
+
+        findViewById(R.id.rate_app).setOnClickListener(v -> {
+            try {
+                goToMarket();
+            } catch (Throwable e) {
+                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
-        findViewById(R.id.rate_app).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    goToMarket();
-                } catch (Throwable e) {
-                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        Switch s2 =  findViewById(R.id.extended_volumes);
+        s2.setChecked(isExtendedVolumesEnabled());
+        s2.setOnCheckedChangeListener((buttonView, isChecked) -> setExtendedVolumesEnabled(isChecked));
 
-        findViewById(R.id.new_profile).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(MainActivity.this, EditProfileActivity.class), REQUEST_CODE_NEW_PROFILE);
-            }
-        });
-        for (final AudioType type : AudioType.values()) {
+
+
+        findViewById(R.id.go_to_settings).setOnClickListener(v -> goToVolumeSettings());
+
+        findViewById(R.id.new_profile).setOnClickListener(v -> startActivityForResult(new Intent(MainActivity.this, EditProfileActivity.class), REQUEST_CODE_NEW_PROFILE));
+        for (final AudioType type : AudioType.getAudioTypes(isExtendedVolumesEnabled())) {
 
             final VolumeSliderView volumeSliderView = new VolumeSliderView(this);
 
@@ -113,16 +111,25 @@ public class MainActivity extends BaseActivity {
 
             volumeListeners.add(volumeListener);
 
-            volumeSliderView.setListener(new VolumeSliderView.VolumeSliderChangeListener() {
-                @Override
-                public void onChange(int volume, boolean fromUser) {
-                    if (fromUser) {
-                        requireChangeVolume(type, volume);
-                    }
+            volumeSliderView.setListener((volume, fromUser) -> {
+                if (fromUser) {
+                    requireChangeVolume(type, volume);
                 }
             });
         }
+
+
+        RingerModeSwitch ringerModeSwitch = findViewById(R.id.ringerMode);
+        ringerModeSwitch.setRingMode(control.getRingerMode());
+        ringerModeSwitch.setRingSwitcher(control::requestRindgerMode);
+        control.addOnRingerModeListener(ringerModeSwitcher);
+        ringerModeSwitch.setVisibility(View.GONE);
     }
+
+    private VolumeControl.RingerModeChangelistener ringerModeSwitcher = (int mode) -> {
+        RingerModeSwitch ringerModeSwitch = findViewById(R.id.ringerMode);
+        ringerModeSwitch.setRingMode(mode);
+    };
 
     static int vibrateSettingToValue(int position) {
         switch (position) {
@@ -141,18 +148,10 @@ public class MainActivity extends BaseActivity {
         final LinearLayout profiles = findViewById(R.id.profile_list);
         final VolumeProfileView view = new VolumeProfileView(this);
         view.setProfileTitle(profile.name);
-        view.setOnActivateClickListener(new Runnable() {
-            @Override
-            public void run() {
-                ProfileApplier.applyProfile(control, profile);
-            }
-        });
-        view.setOnEditClickListener(new Runnable() {
-            @Override
-            public void run() {
-              profileStorage.removeProfile(profile.id);
-              profiles.removeView(view);
-            }
+        view.setOnActivateClickListener(() -> ProfileApplier.applyProfile(control, profile));
+        view.setOnEditClickListener(() -> {
+          profileStorage.removeProfile(profile.id);
+          profiles.removeView(view);
         });
         profiles.addView(view,
                 new LinearLayout.LayoutParams(
@@ -196,12 +195,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private Runnable unsetIgnoreRequests = new Runnable() {
-        @Override
-        public void run() {
-            ignoreRequests = false;
-        }
-    };
+    private Runnable unsetIgnoreRequests = () -> ignoreRequests = false;
 
     private void requireChangeVolume(AudioType audioType, int volume) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
@@ -259,7 +253,7 @@ public class MainActivity extends BaseActivity {
 
 
     private void onSilenceModeRequested() {
-        for (AudioType a : AudioType.values()) {
+        for (AudioType a : AudioType.getAudioTypes(isExtendedVolumesEnabled())) {
             requireChangeVolume(a, control.getMinLevel(a.audioStreamName));
         }
         // control.requestRindgerMode(AudioManager.RINGER_MODE_SILENT);
@@ -268,7 +262,7 @@ public class MainActivity extends BaseActivity {
 
 
     private void onFullVolumeModeRequested() {
-        for (AudioType a : AudioType.values()) {
+        for (AudioType a : AudioType.getAudioTypes(isExtendedVolumesEnabled())) {
             requireChangeVolume(a, control.getMaxLevel(a.audioStreamName));
         }
         // control.requestRindgerMode(AudioManager.RINGER_MODE_NORMAL);
@@ -277,7 +271,7 @@ public class MainActivity extends BaseActivity {
 
 
     private void onVibrateModeRequested() {
-        for (AudioType a : AudioType.values()) {
+        for (AudioType a : AudioType.getAudioTypes(isExtendedVolumesEnabled())) {
             requireChangeVolume(a, control.getMinLevel(a.audioStreamName));
         }
         // control.requestRindgerMode(AudioManager.RINGER_MODE_VIBRATE);

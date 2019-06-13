@@ -48,22 +48,14 @@ public class VolumeProfileView extends FrameLayout {
         addView(view);
     }
 
-    public void setOnEditClickListener(final Runnable r) {
-        deleteButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                r.run();
-            }
-        });
+    public void setOnEditClickListener(Runnable r) {
+        deleteButton.setOnClickListener(v -> r.run());
     }
 
-    public void setOnActivateClickListener(final Runnable r) {
-        activeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                r.run();
-            }
-        });
+
+
+    public void setOnActivateClickListener(Runnable r) {
+        activeButton.setOnClickListener(v -> r.run());
     }
 
     public void setProfileTitle(CharSequence title) {

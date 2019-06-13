@@ -24,13 +24,15 @@
         />
 
     <LinearLayout
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
         android:id="@+id/audio_types_holder"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <com.example.punksta.volumecontrol.view.RingerModeSwitch
+        android:id="@+id/ringerMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <FrameLayout
         android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -87,10 +89,26 @@
           android:text="Dark theme"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content" />
-      <Button
-          android:id="@+id/rate_app"
-          android:layout_margin="8dp"
 
+      <Switch
+          android:layout_margin="8dp"
+          android:id="@+id/extended_volumes"
+          android:text="Extended profile settings"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" />
+
+
+      <Button
+          style="@style/Settings_button"
+          android:id="@+id/go_to_settings"
+          android:text="Android sound settings"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" />
+
+
+      <Button
+          style="@style/Settings_button"
+          android:id="@+id/rate_app"
           android:text="Rate app"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content" />
