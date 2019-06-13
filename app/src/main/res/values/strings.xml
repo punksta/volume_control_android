@@ -18,6 +18,17 @@
     <string name="volume_profile_screen_hint">Save volume profile and apply it later</string>
     <string name="volume_profile_name_placeholder">Profile name</string>
     <string name="save">save</string>
+    <string name="main_screen_current_volume_title">Current volume</string>
+    <string name="main_screen_profiles_title">Sound Profiles</string>
+    <string name="settings">Settings</string>
+    <string name="settings_darktheme">Dark theme</string>
+    <string name="settings_extended_volume_settings">Extended volume settings</string>
+    <string name="settings_android_sound_settings">Android sound settings</string>
+    <string name="rate_this_app">Rate app</string>
+    <string name="vibrate_mode">vibrate mode</string>
+    <string name="silence">silence</string>
+    <string name="vibrate">vibrate</string>
+    <string name="ring">ring</string>
 
 
     <string-array name="vibrate_settings">
