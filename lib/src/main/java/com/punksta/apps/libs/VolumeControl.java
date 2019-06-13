@@ -30,6 +30,11 @@ public class VolumeControl {
 
     private boolean ignoreUpdates = false;
 
+    public Context getContext() {
+        return context;
+    }
+
+
     public VolumeControl(Context context, Handler handler) {
         this.context = context;
         mediaManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);

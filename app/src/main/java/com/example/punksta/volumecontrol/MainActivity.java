@@ -1,6 +1,5 @@
 package com.example.punksta.volumecontrol;
 
-import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -17,12 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.Scroller;
+
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.punksta.volumecontrol.data.SoundProfile;
+import com.example.punksta.volumecontrol.util.DynamicShortcutManager;
 import com.example.punksta.volumecontrol.util.ProfileApplier;
 import com.example.punksta.volumecontrol.util.SoundProfileStorage;
 import com.example.punksta.volumecontrol.view.RingerModeSwitch;
@@ -37,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.example.punksta.volumecontrol.EditProfileActivity.REQUEST_CODE_NEW_PROFILE;
+import static com.example.punksta.volumecontrol.util.DynamicShortcutManager.PROFILE_ID;
 
 public class MainActivity extends BaseActivity {
 
@@ -52,6 +52,36 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         profileStorage = new SoundProfileStorage(preferences);
         buildUi();
+        if (savedInstanceState == null) {
+            handleIntent(getIntent());
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (!handleIntent(intent)) {
+            super.onNewIntent(intent);
+        }
+    }
+
+
+    private boolean handleIntent(Intent intent) {
+        if (intent.hasExtra(PROFILE_ID)) {
+            int profileId = intent.getIntExtra(PROFILE_ID, 0);
+            try {
+                SoundProfile profile = profileStorage.loadById(profileId);
+                if (profile != null) {
+                    ProfileApplier.applyProfile(control, profile);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            setIntent(null);
+            finish();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -90,10 +120,9 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        Switch s2 =  findViewById(R.id.extended_volumes);
+        Switch s2 = findViewById(R.id.extended_volumes);
         s2.setChecked(isExtendedVolumesEnabled());
         s2.setOnCheckedChangeListener((buttonView, isChecked) -> setExtendedVolumesEnabled(isChecked));
-
 
 
         findViewById(R.id.go_to_settings).setOnClickListener(v -> goToVolumeSettings());
@@ -146,6 +175,18 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                DynamicShortcutManager.setShortcuts(this, profileStorage.loadAll());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     private VolumeControl.RingerModeChangelistener ringerModeSwitcher = (int mode) -> {
         RingerModeSwitch ringerModeSwitch = findViewById(R.id.ringerMode);
         ringerModeSwitch.setRingMode(mode);
@@ -170,8 +211,11 @@ public class MainActivity extends BaseActivity {
         view.setProfileTitle(profile.name);
         view.setOnActivateClickListener(() -> ProfileApplier.applyProfile(control, profile));
         view.setOnEditClickListener(() -> {
-          profileStorage.removeProfile(profile.id);
-          profiles.removeView(view);
+            profileStorage.removeProfile(profile.id);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                DynamicShortcutManager.removeShortcut(this, profile);
+            }
+            profiles.removeView(view);
         });
         profiles.addView(view,
                 new LinearLayout.LayoutParams(
@@ -186,7 +230,7 @@ public class MainActivity extends BaseActivity {
         profiles.removeAllViews();
 
         for (final SoundProfile profile : profileStorage.loadAll()) {
-          renderProfile(profile);
+            renderProfile(profile);
         }
 
     }
@@ -312,7 +356,7 @@ public class MainActivity extends BaseActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     HashMap<Integer, Integer> volumes = (HashMap<Integer, Integer>) data.getSerializableExtra("volumes");
                     String name = data.getStringExtra("name");
-                    SoundProfile profile =  profileStorage.addProfile(name, volumes);
+                    SoundProfile profile = profileStorage.addProfile(name, volumes);
                     renderProfile(profile);
                 }
             }
