@@ -53,7 +53,7 @@ public class EditProfileActivity extends BaseActivity {
         Intent i = new Intent();
         i.putExtra("volumes", volumes);
         EditText t= findViewById(R.id.profile_name);
-        i.putExtra("name", t.getText().length() > 0 ?  t.getText().toString()  : "Profile");
+        i.putExtra("name", t.getText().length() > 0 ?  t.getText().toString()  : this.getString(R.string.defaultProfileName));
         setResult(Activity.RESULT_OK, i);
         finish();
     }

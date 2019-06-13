@@ -13,6 +13,11 @@
     <string name="volumeType_systemSounds">System sounds</string>
     <string name="volumeType_dtmf">DTMF tokens</string>
     <string name="volumeType_accessibility">Accessibility</string>
+    <string name="defaultProfileName">Profile</string>
+    <string name="volume_profile_screen_title">Volume profile</string>
+    <string name="volume_profile_screen_hint">Save volume profile and apply it later</string>
+    <string name="volume_profile_name_placeholder">Profile name</string>
+    <string name="save">save</string>
 
 
     <string-array name="vibrate_settings">
