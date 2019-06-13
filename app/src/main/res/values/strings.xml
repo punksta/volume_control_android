@@ -1,9 +1,10 @@
 <resources>
-    <string name="app_name">VolumeControl</string>
+    <string name="app_name">Volume Control</string>
     <string name="main_menu.silence" translatable="false">silence</string>
     <string name="main_menu.silence_off" translatable="false">full volume</string>
     <string name="btn_apply_profile">apply</string>
     <string name="btn_delete_profile">delete</string>
+    <string name="new_profile_add">add new</string>
 
 
     <string-array name="vibrate_settings">

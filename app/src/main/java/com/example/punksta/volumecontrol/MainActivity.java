@@ -1,5 +1,6 @@
 package com.example.punksta.volumecontrol;
 
+import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -9,12 +10,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.Scroller;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -48,6 +52,16 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         profileStorage = new SoundProfileStorage(preferences);
         buildUi();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        //super.onSaveInstanceState(outState, outPersistentState);
     }
 
 
@@ -124,6 +138,12 @@ public class MainActivity extends BaseActivity {
         ringerModeSwitch.setRingSwitcher(control::requestRindgerMode);
         control.addOnRingerModeListener(ringerModeSwitcher);
         ringerModeSwitch.setVisibility(View.GONE);
+
+        try {
+            renderProfiles();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private VolumeControl.RingerModeChangelistener ringerModeSwitcher = (int mode) -> {
@@ -171,17 +191,6 @@ public class MainActivity extends BaseActivity {
 
     }
 
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        try {
-            renderProfiles();
-        } catch (JSONException e) {
-           throw new RuntimeException(e);
-        }
-    }
 
     static int vibrateSettingToPosition(int setting) {
         switch (setting) {

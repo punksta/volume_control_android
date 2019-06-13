@@ -70,14 +70,10 @@ public class VolumeSliderView  extends FrameLayout {
         mCurrentValue = view.findViewById(R.id.current_value);
         seekBar = view.findViewById(R.id.seek_bar);
         seekBar.setOnSeekBarChangeListener(listener);
-        int padding = (int )convertDpToPixel(10, getContext());
+//        int padding = (int )convertDpToPixel(10, getContext());
 
-        seekBar.setPadding(padding, 0, padding, 0);
+//        seekBar.setPadding(padding, 0, padding, 0);
         addView(view);
-    }
-
-    void setDiscrete(boolean isEnabled, int tintColor) {
-        seekBar.setTickMark(getContext().getDrawable(android.R.drawable.ic_notification_overlay));
     }
 
 
@@ -96,8 +92,12 @@ public class VolumeSliderView  extends FrameLayout {
     }
 
     public void setCurrentVolume(int progress) {
+        setCurrentVolume(progress, false);
+    }
+
+    public void setCurrentVolume(int progress, boolean animated) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            seekBar.setProgress(progress, true);
+            seekBar.setProgress(progress, animated);
         } else {
             seekBar.setProgress(progress);
         }

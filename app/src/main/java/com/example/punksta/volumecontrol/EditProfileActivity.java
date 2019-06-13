@@ -32,15 +32,14 @@ public class EditProfileActivity extends BaseActivity {
             volumeSliderView.setId(type.audioStreamName);
             scrollView.addView(volumeSliderView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             volumeSliderView.setVolumeName(type.displayName);
+            volumeSliderView.setCurrentVolume(control.getMaxLevel(type.audioStreamName), false);
             volumeSliderView.setMaxVolume(control.getMaxLevel(type.audioStreamName));
             volumeSliderView.setMinVolume(control.getMinLevel(type.audioStreamName));
-            volumeSliderView.setCurrentVolume(control.getMaxLevel(type.audioStreamName));
             volumes.put(type.audioStreamName, control.getMaxLevel(type.audioStreamName));
 
 
             volumeSliderView.setListener((volume, fromUser) -> {
                 if (fromUser) {
-                    volumeSliderView.setCurrentVolume(volume);
                     volumes.put(type.audioStreamName, volume);
                 }
             });

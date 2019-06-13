@@ -89,7 +89,9 @@ public class VolumeControl {
     }
 
     public void unRegisterVolumeListener(int type, VolumeListener volumeListener) {
-        listenerSet.get(type).remove(volumeListener);
+        if (listenerSet.get(type) != null) {
+            listenerSet.get(type).remove(volumeListener);
+        }
         if (listenerSet.get(type).size() == 0) {
             listenerSet.remove(type);
             audioObserver.lastVolumes.remove(type);

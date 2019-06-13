@@ -57,6 +57,7 @@ abstract public class BaseActivity extends Activity {
         return this.darkTheme;
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
