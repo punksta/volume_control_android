@@ -15,7 +15,7 @@
     <string name="volumeType_accessibility">Accessibility</string>
     <string name="defaultProfileName">Profile</string>
     <string name="volume_profile_screen_title">Volume profile</string>
-    <string name="volume_profile_screen_hint">Save volume profile and apply it later</string>
+    <string name="volume_profile_screen_hint">Save sound profile to apply it later. Profiles are saved as the app launcher icon shortcuts and on the app main page.</string>
     <string name="volume_profile_name_placeholder">Profile name</string>
     <string name="save">save</string>
     <string name="main_screen_current_volume_title">Current volume</string>
