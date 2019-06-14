@@ -29,18 +29,18 @@ public class EditProfileActivity extends BaseActivity {
 
         for (final AudioType type : AudioType.getAudioTypes(isExtendedVolumesEnabled())) {
             final VolumeSliderView volumeSliderView = new VolumeSliderView(this);
-            volumeSliderView.setId(type.audioStreamName);
             scrollView.addView(volumeSliderView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             volumeSliderView.setVolumeName(getString(type.nameId));
-            volumeSliderView.setCurrentVolume(control.getMaxLevel(type.audioStreamName), false);
             volumeSliderView.setMaxVolume(control.getMaxLevel(type.audioStreamName));
             volumeSliderView.setMinVolume(control.getMinLevel(type.audioStreamName));
+            volumeSliderView.setCurrentVolume(control.getMaxLevel(type.audioStreamName), false);
             volumes.put(type.audioStreamName, control.getMaxLevel(type.audioStreamName));
 
 
             volumeSliderView.setListener((volume, fromUser) -> {
                 if (fromUser) {
                     volumes.put(type.audioStreamName, volume);
+                    volumeSliderView.updateProgressText(volume);
                 }
             });
 
