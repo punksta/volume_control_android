@@ -135,7 +135,7 @@ public class MainActivity extends BaseActivity {
             volumeSliderView.setId(type.audioStreamName);
             scrollView.addView(volumeSliderView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-            volumeSliderView.setVolumeName(type.displayName);
+            volumeSliderView.setVolumeName(getString(type.nameId));
             volumeSliderView.setMaxVolume(control.getMaxLevel(type.audioStreamName));
             volumeSliderView.setMinVolume(control.getMinLevel(type.audioStreamName));
             volumeSliderView.setCurrentVolume(control.getLevel(type.audioStreamName));

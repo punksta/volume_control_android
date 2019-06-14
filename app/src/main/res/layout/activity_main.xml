@@ -12,7 +12,6 @@
 
   <LinearLayout
       android:animateLayoutChanges="true"
-
       android:paddingBottom="@dimen/activity_vertical_margin"
       android:paddingLeft="@dimen/activity_horizontal_margin"
       android:paddingRight="@dimen/activity_horizontal_margin"
@@ -24,7 +23,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Current volume"
+        android:text="@string/main_screen_current_volume_title"
         style="@style/ScreenHeader"
         />
 
@@ -47,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="Sound Profiles"
+        android:text="@string/main_screen_profiles_title"
         style="@style/ScreenHeader"
         />
 
@@ -72,7 +71,7 @@
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Settings"
+        android:text="@string/settings"
         style="@style/ScreenHeader"
         />
 
@@ -85,14 +84,14 @@
       <Switch
           android:layout_marginVertical="8dp"
           android:id="@+id/dark_theme_switcher"
-          android:text="Dark theme"
+          android:text="@string/settings_darktheme"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content" />
 
       <Switch
           android:layout_marginVertical="8dp"
           android:id="@+id/extended_volumes"
-          android:text="Extended profile settings"
+          android:text="@string/settings_extended_volume_settings"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content" />
 
@@ -101,7 +100,7 @@
           android:layout_marginLeft="-8dp"
           style="@style/Settings_button"
           android:id="@+id/go_to_settings"
-          android:text="Android sound settings"
+          android:text="@string/settings_android_sound_settings"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content" />
 
@@ -110,7 +109,7 @@
           android:layout_marginLeft="-8dp"
           style="@style/Settings_button"
           android:id="@+id/rate_app"
-          android:text="Rate app"
+          android:text="@string/rate_this_app"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content" />
 

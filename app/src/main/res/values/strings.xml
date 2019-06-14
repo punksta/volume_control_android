@@ -5,6 +5,30 @@
     <string name="btn_apply_profile">apply</string>
     <string name="btn_delete_profile">delete</string>
     <string name="new_profile_add">add new</string>
+    <string name="volumeType_alarm">Alarm</string>
+    <string name="volumeType_media">Media</string>
+    <string name="volumeType_voiceCall">Voice call</string>
+    <string name="volumeType_ring">Ring</string>
+    <string name="volumeType_notifications">Notification</string>
+    <string name="volumeType_systemSounds">System sounds</string>
+    <string name="volumeType_dtmf">DTMF tokens</string>
+    <string name="volumeType_accessibility">Accessibility</string>
+    <string name="defaultProfileName">Profile</string>
+    <string name="volume_profile_screen_title">Volume profile</string>
+    <string name="volume_profile_screen_hint">Save volume profile and apply it later</string>
+    <string name="volume_profile_name_placeholder">Profile name</string>
+    <string name="save">save</string>
+    <string name="main_screen_current_volume_title">Current volume</string>
+    <string name="main_screen_profiles_title">Sound Profiles</string>
+    <string name="settings">Settings</string>
+    <string name="settings_darktheme">Dark theme</string>
+    <string name="settings_extended_volume_settings">Extended volume settings</string>
+    <string name="settings_android_sound_settings">Android sound settings</string>
+    <string name="rate_this_app">Rate app</string>
+    <string name="vibrate_mode">vibrate mode</string>
+    <string name="silence">silence</string>
+    <string name="vibrate">vibrate</string>
+    <string name="ring">ring</string>
 
 
     <string-array name="vibrate_settings">

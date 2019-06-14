@@ -31,7 +31,7 @@ public class EditProfileActivity extends BaseActivity {
             final VolumeSliderView volumeSliderView = new VolumeSliderView(this);
             volumeSliderView.setId(type.audioStreamName);
             scrollView.addView(volumeSliderView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            volumeSliderView.setVolumeName(type.displayName);
+            volumeSliderView.setVolumeName(getString(type.nameId));
             volumeSliderView.setCurrentVolume(control.getMaxLevel(type.audioStreamName), false);
             volumeSliderView.setMaxVolume(control.getMaxLevel(type.audioStreamName));
             volumeSliderView.setMinVolume(control.getMinLevel(type.audioStreamName));
@@ -53,7 +53,7 @@ public class EditProfileActivity extends BaseActivity {
         Intent i = new Intent();
         i.putExtra("volumes", volumes);
         EditText t= findViewById(R.id.profile_name);
-        i.putExtra("name", t.getText().length() > 0 ?  t.getText().toString()  : "Profile");
+        i.putExtra("name", t.getText().length() > 0 ?  t.getText().toString()  : this.getString(R.string.defaultProfileName));
         setResult(Activity.RESULT_OK, i);
         finish();
     }
