@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:utils="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_marginVertical="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        style="@style/VolumeProfile_Title"
+        android:id="@+id/profile_name"
+        utils:text="Home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Space
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+
+
+    <Button
+        android:minHeight="0dp"
+        style="@style/VolumeProfile_Button"
+        android:id="@+id/delete_btn"
+        android:text="@string/btn_delete_profile"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:minHeight="0dp"
+        style="@style/VolumeProfile_Button"
+        android:id="@+id/active_btn"
+        android:text="@string/btn_apply_profile"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+
+</LinearLayout>

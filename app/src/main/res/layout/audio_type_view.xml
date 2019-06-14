@@ -2,14 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
-              android:layout_marginTop="16dp"
+              android:layout_marginTop="8dp"
 
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
     <TextView
         tools:text="Title"
-        android:textSize="@dimen/title_size"
+        style="@style/VolumeLevel_Title"
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
@@ -17,21 +17,21 @@
 
 
     <TextView
+        style="@style/VolumeLevel_Title"
         tools:text="100%"
-        android:textSize="@dimen/title_size"
-        android:layout_marginLeft="25dp"
         android:id="@+id/current_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_alignBaseline="@+id/title"
         android:layout_alignTop="@+id/title"
-        android:layout_toRightOf="@+id/title"
-        android:layout_toEndOf="@+id/title"
-        android:layout_marginStart="8dp"/>
-
+       />
 
 
     <SeekBar
+        android:layout_marginLeft="-10dp"
+        android:layout_marginRight="-10dp"
+        android:paddingBottom="5dp"
         android:layout_marginTop="5dp"
         android:id="@+id/seek_bar"
         android:layout_width="match_parent"
@@ -40,16 +40,18 @@
 
 
     <TextView
+        android:visibility="gone"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="16dp"
         android:textSize="14sp"
         android:id="@+id/vibrate_text"
-        android:text="vibrate mode"
+        android:text="@string/vibrate_mode"
         android:layout_below="@+id/seek_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <Spinner
+        android:visibility="gone"
         android:layout_marginBottom="4dp"
         android:entries="@array/vibrate_settings"
         android:id="@+id/vibrate_level"

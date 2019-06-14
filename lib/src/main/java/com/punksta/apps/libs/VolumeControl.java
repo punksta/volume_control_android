@@ -22,12 +22,18 @@ public class VolumeControl {
     private final Context context;
 
     private final Map<Integer, Set<VolumeListener>> listenerSet = new HashMap<>();
+    private final Set<RingerModeChangelistener> ringerModeListeners = new HashSet<>();
 
     private final IntentFilter intentFilter;
     private AudioObserver audioObserver = new AudioObserver();
     private final Handler handler;
 
     private boolean ignoreUpdates = false;
+
+    public Context getContext() {
+        return context;
+    }
+
 
     public VolumeControl(Context context, Handler handler) {
         this.context = context;
@@ -43,16 +49,14 @@ public class VolumeControl {
         intentFilter.addAction("android.media.EXTRA_VIBRATE_SETTING");
     }
 
-    public int getVibrateType(int vibrateType) {
-       return mediaManager.getVibrateSetting(vibrateType);
-    }
 
-    public void setVibrateSettings(int vibrateType, int vibrateSettings) {
-        mediaManager.setVibrateSetting(vibrateType, vibrateSettings);
-    }
 
     public void setVolumeLevel(int type, int index) {
         mediaManager.setStreamVolume(type, index, 0);
+    }
+
+    public void addOnRingerModeListener(RingerModeChangelistener l) {
+        ringerModeListeners.add(l);
     }
 
     public int getMaxLevel(int type) {
@@ -90,7 +94,9 @@ public class VolumeControl {
     }
 
     public void unRegisterVolumeListener(int type, VolumeListener volumeListener) {
-        listenerSet.get(type).remove(volumeListener);
+        if (listenerSet.get(type) != null) {
+            listenerSet.get(type).remove(volumeListener);
+        }
         if (listenerSet.get(type).size() == 0) {
             listenerSet.remove(type);
             audioObserver.lastVolumes.remove(type);
@@ -102,6 +108,10 @@ public class VolumeControl {
 
     public interface VolumeListener {
         void onChangeIndex(int autodioStream, int currentLevel, int max);
+    }
+
+    public interface RingerModeChangelistener {
+        void onChange(int mode);
     }
 
     public void requestRindgerMode(int ringerMode) {
@@ -132,6 +142,9 @@ public class VolumeControl {
                 Integer current = getLevel(entry.getKey());
                 notifyListeners(entry.getKey(), current);
             }
+            for (RingerModeChangelistener ringerModeListener : ringerModeListeners) {
+                ringerModeListener.onChange(getRingerMode());
+            }
         }
 
         private Runnable updateRunnable = new Runnable() {
@@ -149,6 +162,7 @@ public class VolumeControl {
                 handler.postDelayed(updateRunnable, 500);
                 return;
             }
+
             ignoreUpdates = true;
             handler.postDelayed(updateRunnable, 500);
         }
