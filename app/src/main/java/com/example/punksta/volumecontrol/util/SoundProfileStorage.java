@@ -1,6 +1,8 @@
 package com.example.punksta.volumecontrol.util;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.example.punksta.volumecontrol.data.SoundProfile;
 
@@ -9,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +18,16 @@ public class SoundProfileStorage {
     private final SharedPreferences preferences;
     private List<Integer> ids;
 
+    private static SoundProfileStorage instance;
 
-    public SoundProfileStorage(SharedPreferences preferences) {
+    public static SoundProfileStorage getInstance(Context context) {
+        if (instance == null) {
+            instance = new SoundProfileStorage(PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext()));
+        }
+        return instance;
+    }
+
+    private SoundProfileStorage(SharedPreferences preferences) {
         this.preferences = preferences;
     }
 

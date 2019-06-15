@@ -3,6 +3,7 @@
     package="com.example.punksta.volumecontrol">
 
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:icon="@mipmap/ic_launcher_new"
@@ -10,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_new_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name=".SoundService"/>
         <activity android:name=".EditProfileActivity"/>
         <activity android:name=".MainActivity" android:launchMode="singleInstance">
             <intent-filter>

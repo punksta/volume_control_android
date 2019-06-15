@@ -50,7 +50,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        profileStorage = new SoundProfileStorage(preferences);
+        profileStorage = SoundProfileStorage.getInstance(this);
         buildUi();
         if (savedInstanceState == null) {
             handleIntent(getIntent());
@@ -102,6 +102,7 @@ public class MainActivity extends BaseActivity {
     private void goToMarket() {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
     }
+
 
     private void buildUi() {
         LinearLayout scrollView = findViewById(R.id.audio_types_holder);
@@ -175,16 +176,27 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private void startSoundService() {
+        Intent i = new Intent(this, SoundService.class);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(i);
+        } else {
+            startService(i);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         try {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 DynamicShortcutManager.setShortcuts(this, profileStorage.loadAll());
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        startSoundService();
     }
 
     private VolumeControl.RingerModeChangelistener ringerModeSwitcher = (int mode) -> {
