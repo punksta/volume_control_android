@@ -90,7 +90,9 @@ public class SoundService extends Service {
 
     private void createStaticNotificationChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            manager.createNotificationChannel(new NotificationChannel(staticNotificationId, "Static notification widget", NotificationManager.IMPORTANCE_HIGH));
+            NotificationChannel channel = new NotificationChannel(staticNotificationId, "Static notification widget", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setSound(null, null);
+            manager.createNotificationChannel(channel);
         }
     }
 
