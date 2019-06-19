@@ -49,7 +49,11 @@ public class VolumeControl {
         intentFilter.addAction("android.media.EXTRA_VIBRATE_SETTING");
     }
 
-
+    public void unregisterAll() {
+        listenerSet.clear();
+        ringerModeListeners.clear();
+        context.unregisterReceiver(audioObserver);
+    }
 
     public void setVolumeLevel(int type, int index) {
         mediaManager.setStreamVolume(type, index, 0);

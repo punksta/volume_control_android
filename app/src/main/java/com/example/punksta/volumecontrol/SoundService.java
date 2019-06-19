@@ -93,6 +93,7 @@ public class SoundService extends Service {
     public void onDestroy() {
         super.onDestroy();
         soundProfileStorage.removeListener(listener);
+        control.unregisterAll();
     }
 
     @Override
