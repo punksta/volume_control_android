@@ -31,6 +31,21 @@ public class SoundService extends Service {
     private static final String staticNotificationId = "static";
 
 
+    SoundProfileStorage.Listener listener = new SoundProfileStorage.Listener() {
+        @Override
+        public void onStorageChanged() {
+            try {
+                manager.notify(staticNotificationNumber, buildForegroundNotification(SoundService.this, soundProfileStorage.loadAll()));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    NotificationManager manager;
+
+
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -48,6 +63,7 @@ public class SoundService extends Service {
             this.stopSelf(startId);
             return super.onStartCommand(intent, flags, startId);
         } else {
+            soundProfileStorage.addListener(listener);
             createStaticNotificationChannel();
             try {
                 startForeground(staticNotificationNumber, buildForegroundNotification(this, soundProfileStorage.loadAll()));
@@ -60,15 +76,20 @@ public class SoundService extends Service {
 
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        soundProfileStorage.removeListener(listener);
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
         soundProfileStorage = SoundProfileStorage.getInstance(this);
-
+        manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
     private void createStaticNotificationChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             manager.createNotificationChannel(new NotificationChannel(staticNotificationId, "Static notification widget", NotificationManager.IMPORTANCE_HIGH));
         }
     }

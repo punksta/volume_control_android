@@ -11,10 +11,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class SoundProfileStorage {
+    public static interface Listener {
+        void onStorageChanged();
+    }
+
+    private Set<Listener> listeners = new HashSet<>();
+
     private final SharedPreferences preferences;
     private List<Integer> ids;
 
@@ -29,6 +37,22 @@ public class SoundProfileStorage {
 
     private SoundProfileStorage(SharedPreferences preferences) {
         this.preferences = preferences;
+        preferences.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
+            if (key.equals("ids")) {
+                for (Listener listener : listeners) {
+                    listener.onStorageChanged();
+                }
+            }
+        });
+    }
+
+
+    public void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(Listener listener) {
+        listeners.remove(listener);
     }
 
 
