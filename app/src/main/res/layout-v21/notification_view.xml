@@ -17,6 +17,8 @@
         android:layout_height="24dp" />
 
     <TextView
+        android:layout_marginStart="8dp"
+        android:layout_alignBottom="@+id/app_icon"
         android:textAppearance="@android:style/TextAppearance.Material.Notification.Title"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
@@ -29,7 +31,7 @@
     <TextView
         android:id="@+id/remove_notification_action"
         android:text="x"
-        android:layout_alignBaseline="@+id/app_icon"
+        android:layout_marginTop="-8dp"
         android:textAppearance="@android:style/TextAppearance.Material.Notification.Title"
         android:textSize="21sp"
         android:paddingStart="5dp"
@@ -41,6 +43,7 @@
     <LinearLayout
         android:id="@+id/media_slider"
         android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
         android:layout_below="@+id/app_icon"
         android:orientation="horizontal"
         android:layout_width="match_parent"
