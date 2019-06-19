@@ -38,7 +38,9 @@ public class DynamicShortcutManager {
     public static void setShortcuts(Activity activity, SoundProfile[] soundProfiles) {
         final List<ShortcutInfo> shortcutInfos = new ArrayList<>();
         for (SoundProfile soundProfile : soundProfiles) {
-            shortcutInfos.add(createShortcutInfo(activity, soundProfile));
+            if (!soundProfile.name.isEmpty()) {
+                shortcutInfos.add(createShortcutInfo(activity, soundProfile));
+            }
         }
         ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
         if (shortcutManager.getMaxShortcutCountPerActivity() < shortcutInfos.size()) {
