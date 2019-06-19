@@ -26,6 +26,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:id="@+id/remove_notification_action"
+        android:text="x"
+        android:layout_alignBaseline="@+id/app_icon"
+        android:paddingHorizontal="5dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Notification.Title"
+        android:textSize="21sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true" />
+
     <GridLayout
         android:columnCount="4"
         android:rowCount="4"

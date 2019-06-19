@@ -12,12 +12,14 @@ abstract public class BaseActivity extends Activity {
 
     private static String THEME_PREF_NAME = "DARK_THEME";
     private static String EXTENDED_PREF_NAME = "EXTENDED_VOLUME_SETTINGS";
+    private static String NOTIFICATION_WIDGET = "NOTIFICATION_WIDGET";
 
 
     protected SharedPreferences preferences;
 
     private boolean darkTheme = false;
     private boolean extendedVolumesEnabled = false;
+    private boolean notificationWidgetEnabled = false;
 
     protected VolumeControl control;
 
@@ -29,6 +31,7 @@ abstract public class BaseActivity extends Activity {
         preferences =  PreferenceManager.getDefaultSharedPreferences(this);
         this.darkTheme = preferences.getBoolean(THEME_PREF_NAME, false);
         this.extendedVolumesEnabled = preferences.getBoolean(EXTENDED_PREF_NAME, false);
+        this.notificationWidgetEnabled = preferences.getBoolean(NOTIFICATION_WIDGET, false);
 
         if (this.darkTheme) {
             setTheme(R.style.AppTheme_Dark);
@@ -57,6 +60,14 @@ abstract public class BaseActivity extends Activity {
         return this.darkTheme;
     }
 
+    public boolean isNotificationWidgetEnabled() {
+        return notificationWidgetEnabled;
+    }
+
+    public void setNotificationWidgetEnabled(boolean notificationWidgetEnabled) {
+        preferences.edit().putBoolean(NOTIFICATION_WIDGET,  notificationWidgetEnabled).apply();
+        this.notificationWidgetEnabled = notificationWidgetEnabled;
+    }
 
     @Override
     protected void onStart() {

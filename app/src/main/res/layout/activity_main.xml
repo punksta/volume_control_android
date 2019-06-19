@@ -96,6 +96,15 @@
           android:layout_height="wrap_content" />
 
 
+      <Switch
+          android:layout_marginVertical="8dp"
+          android:id="@+id/notification_widget"
+          android:text="@string/settings.notification_widget"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" />
+
+
+
       <Button
           android:layout_marginLeft="-8dp"
           style="@style/Settings_button"
