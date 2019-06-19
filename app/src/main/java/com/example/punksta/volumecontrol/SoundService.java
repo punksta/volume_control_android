@@ -20,6 +20,8 @@ import com.punksta.apps.libs.VolumeControl;
 
 import org.json.JSONException;
 
+import static com.example.punksta.volumecontrol.AudioType.getNotificationTypes;
+
 
 public class SoundService extends Service {
 
@@ -69,7 +71,7 @@ public class SoundService extends Service {
         } else if (STOP_ACTION.equals(action)) {
             this.stopSelf(startId);
             return super.onStartCommand(intent, flags, startId);
-        } else if(CHANGE_VOLUME_ACTION.equals(action)) {
+        } else if (CHANGE_VOLUME_ACTION.equals(action)) {
             int type = intent.getIntExtra(EXTRA_TYPE, 0);
             int volume = intent.getIntExtra(EXTRA_VOLUME, 0);
             control.setVolumeLevel(type, volume);
@@ -99,7 +101,7 @@ public class SoundService extends Service {
         soundProfileStorage = SoundProfileStorage.getInstance(this);
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         control = new VolumeControl(this, new Handler());
-        control.registerVolumeListener( AudioManager.STREAM_MUSIC, voluleListener,false );
+        control.registerVolumeListener(AudioManager.STREAM_MUSIC, voluleListener, false);
     }
 
     private void createStaticNotificationChannel() {
@@ -114,6 +116,54 @@ public class SoundService extends Service {
 
     private static final int PROFILE_ID_PREFIX = 10000;
     private static final int VOLUME_ID_PREFIX = 100;
+
+
+    private static RemoteViews buildVolumeSlider(Context context, VolumeControl control, int typeId, CharSequence typeName) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.notification_volume_slider);
+        views.removeAllViews(R.id.volume_slider);
+
+        for (int i = 0; i < control.getMaxLevel(typeId); i++) {
+            boolean isActive = i < control.getLevel(typeId);
+            RemoteViews sliderItemView = new RemoteViews(
+                    context.getPackageName(),
+                    isActive ? R.layout.notificatiion_slider_active : R.layout.notificatiion_slider_inactive
+            );
+            int requestId = VOLUME_ID_PREFIX + i * 100 + typeId;
+
+            sliderItemView.setOnClickPendingIntent(
+                    R.id.notification_slider_item,
+                    PendingIntent.getService(
+                            context,
+                            requestId,
+                            setVolumeIntent(context, typeId, i + 1),
+                            PendingIntent.FLAG_UPDATE_CURRENT)
+            );
+            views.addView(R.id.volume_slider, sliderItemView);
+        }
+
+
+        views.setTextViewText(R.id.volume_title, typeName);
+
+        views.setOnClickPendingIntent(
+                R.id.volume_up,
+                PendingIntent.getService(
+                        context,
+                        VOLUME_ID_PREFIX + 10 + typeId,
+                        setVolumeIntent(context, typeId, control.getLevel(typeId) + 1),
+                        PendingIntent.FLAG_UPDATE_CURRENT)
+        );
+
+        views.setOnClickPendingIntent(
+                R.id.volume_down,
+                PendingIntent.getService(
+                        context,
+                        VOLUME_ID_PREFIX + 20 + typeId,
+                        setVolumeIntent(context, typeId, control.getLevel(typeId) - 1),
+                        PendingIntent.FLAG_UPDATE_CURRENT)
+        );
+
+        return views;
+    }
 
     private static Notification buildForegroundNotification(Context context, SoundProfile[] profiles, VolumeControl control) {
         Notification.Builder builder = new Notification.Builder(context);
@@ -135,45 +185,13 @@ public class SoundService extends Service {
             remoteViews.addView(R.id.notifications_user_profiles, profileViews);
         }
 
-        remoteViews.removeAllViews(R.id.media_settings);
 
+        remoteViews.removeAllViews(R.id.volume_sliders);
 
-        for (int i = 0; i < control.getMaxLevel(AudioManager.STREAM_MUSIC); i++) {
-            boolean isActive = i < control.getLevel(AudioManager.STREAM_MUSIC);
-            RemoteViews sliderItemView = new RemoteViews(
-                    context.getPackageName(),
-                    isActive ? R.layout.notificatiion_slider_active : R.layout.notificatiion_slider_inactive
-            );
-            int requestId = VOLUME_ID_PREFIX + i * 100 + AudioManager.STREAM_MUSIC;
-
-            sliderItemView.setOnClickPendingIntent(
-                    R.id.notification_slider_item,
-                    PendingIntent.getService(
-                            context,
-                            requestId ,
-                            setVolumeIntent(context, AudioManager.STREAM_MUSIC, i),
-                            PendingIntent.FLAG_UPDATE_CURRENT)
-            );
-            remoteViews.addView(R.id.media_settings, sliderItemView);
+        for (AudioType notificationType : getNotificationTypes()) {
+            remoteViews.addView(R.id.volume_sliders, buildVolumeSlider(context, control, notificationType.audioStreamName, context.getString(notificationType.nameId)));
         }
 
-        remoteViews.setOnClickPendingIntent(
-                R.id.media_up,
-                PendingIntent.getService(
-                        context,
-                        VOLUME_ID_PREFIX +  10 + AudioManager.STREAM_MUSIC ,
-                        setVolumeIntent(context, AudioManager.STREAM_MUSIC, control.getLevel(AudioManager.STREAM_MUSIC) + 1),
-                        PendingIntent.FLAG_UPDATE_CURRENT)
-        );
-
-        remoteViews.setOnClickPendingIntent(
-                R.id.media_down,
-                PendingIntent.getService(
-                        context,
-                        VOLUME_ID_PREFIX +  20 + AudioManager.STREAM_MUSIC,
-                        setVolumeIntent(context, AudioManager.STREAM_MUSIC, control.getLevel(AudioManager.STREAM_MUSIC) -1),
-                        PendingIntent.FLAG_UPDATE_CURRENT)
-        );
 
         remoteViews.setOnClickPendingIntent(R.id.remove_notification_action, PendingIntent.getService(context, 100, getStopIntent(context), 0));
 

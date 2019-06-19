@@ -3,6 +3,7 @@ package com.example.punksta.volumecontrol;
 import android.media.AudioManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,6 +18,10 @@ public class AudioType {
     private static AudioType SYSTEM_SOUNDS = new AudioType(R.string.volumeType_systemSounds, AudioManager.STREAM_SYSTEM);
     private static AudioType DTMF = new AudioType(R.string.volumeType_dtmf, AudioManager.STREAM_DTMF);
 
+
+    public static List<AudioType> getNotificationTypes() {
+        return Arrays.asList(MEDIA, RING);
+    }
 
     public static List<AudioType> getAudioTypes(boolean externedEnabled) {
         List<AudioType> result = new ArrayList<>();
