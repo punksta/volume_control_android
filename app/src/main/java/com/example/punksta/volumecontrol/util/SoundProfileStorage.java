@@ -35,15 +35,17 @@ public class SoundProfileStorage {
         return instance;
     }
 
+    private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = (sharedPreferences, key) -> {
+        if (key.equals("ids")) {
+            for (Listener listener : listeners) {
+                listener.onStorageChanged();
+            }
+        }
+    };
+
     private SoundProfileStorage(SharedPreferences preferences) {
         this.preferences = preferences;
-        preferences.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
-            if (key.equals("ids")) {
-                for (Listener listener : listeners) {
-                    listener.onStorageChanged();
-                }
-            }
-        });
+        preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 
 
@@ -79,8 +81,10 @@ public class SoundProfileStorage {
 
     public void removeProfile(int id) {
         ids.remove(ids.indexOf(Integer.valueOf(id)));
-        preferences.edit().remove("" + id).apply();
-        preferences.edit().putString("ids", serializeIds(ids)).apply();
+        preferences.edit()
+                .remove("" + id)
+                .putString("ids", serializeIds(ids))
+                .apply();
     }
 
     public void saveProfile(SoundProfile profile) {
@@ -154,7 +158,7 @@ public class SoundProfileStorage {
 
         JSONObject settings = object.getJSONObject("settings");
 
-        for(int i = 0; i< settings.names().length(); i++){
+        for (int i = 0; i < settings.names().length(); i++) {
             String key = settings.names().getString(i);
             int value = settings.getInt(key);
 
