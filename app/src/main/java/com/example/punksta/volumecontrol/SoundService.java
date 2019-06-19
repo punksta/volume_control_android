@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -22,6 +23,13 @@ import org.json.JSONException;
 
 public class SoundService extends Service {
 
+    private VolumeControl.VolumeListener voluleListener = new MainActivity.TypeListener(AudioManager.STREAM_MUSIC) {
+        @Override
+        public void onChangeIndex(int autodioStream, int currentLevel, int max) {
+            updateNotification();
+        }
+    };
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -30,21 +38,20 @@ public class SoundService extends Service {
     private static final int staticNotificationNumber = 1;
     private static final String staticNotificationId = "static";
 
+    private VolumeControl control;
 
-    SoundProfileStorage.Listener listener = new SoundProfileStorage.Listener() {
-        @Override
-        public void onStorageChanged() {
-            try {
-                manager.notify(staticNotificationNumber, buildForegroundNotification(SoundService.this, soundProfileStorage.loadAll()));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    };
+    SoundProfileStorage.Listener listener = this::updateNotification;
 
     NotificationManager manager;
 
 
+    private void updateNotification() {
+        try {
+            manager.notify(staticNotificationNumber, buildForegroundNotification(SoundService.this, soundProfileStorage.loadAll(), control));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -54,7 +61,7 @@ public class SoundService extends Service {
         if (APPLY_PROFILE_ACTION.equals(action)) {
             try {
                 SoundProfile profile = soundProfileStorage.loadById(intent.getIntExtra(PROFILE_ID, -1));
-                ProfileApplier.applyProfile(new VolumeControl(this, new Handler()), profile);
+                ProfileApplier.applyProfile(control, profile);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -62,11 +69,16 @@ public class SoundService extends Service {
         } else if (STOP_ACTION.equals(action)) {
             this.stopSelf(startId);
             return super.onStartCommand(intent, flags, startId);
+        } else if(CHANGE_VOLUME_ACTION.equals(action)) {
+            int type = intent.getIntExtra(EXTRA_TYPE, 0);
+            int volume = intent.getIntExtra(EXTRA_VOLUME, 0);
+            control.setVolumeLevel(type, volume);
+            return START_STICKY;
         } else {
             soundProfileStorage.addListener(listener);
             createStaticNotificationChannel();
             try {
-                startForeground(staticNotificationNumber, buildForegroundNotification(this, soundProfileStorage.loadAll()));
+                startForeground(staticNotificationNumber, buildForegroundNotification(this, soundProfileStorage.loadAll(), control));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -86,6 +98,8 @@ public class SoundService extends Service {
         super.onCreate();
         soundProfileStorage = SoundProfileStorage.getInstance(this);
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        control = new VolumeControl(this, new Handler());
+        control.registerVolumeListener( AudioManager.STREAM_MUSIC, voluleListener,false );
     }
 
     private void createStaticNotificationChannel() {
@@ -99,9 +113,11 @@ public class SoundService extends Service {
     private SoundProfileStorage soundProfileStorage;
 
     private static final int PROFILE_ID_PREFIX = 10000;
+    private static final int VOLUME_ID_PREFIX = 100;
 
-    private static Notification buildForegroundNotification(Context context, SoundProfile[] profiles) {
+    private static Notification buildForegroundNotification(Context context, SoundProfile[] profiles, VolumeControl control) {
         Notification.Builder builder = new Notification.Builder(context);
+
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_view);
         remoteViews.removeAllViews(R.id.notifications_user_profiles);
@@ -119,6 +135,45 @@ public class SoundService extends Service {
             remoteViews.addView(R.id.notifications_user_profiles, profileViews);
         }
 
+        remoteViews.removeAllViews(R.id.media_settings);
+
+
+        for (int i = 0; i < control.getMaxLevel(AudioManager.STREAM_MUSIC); i++) {
+            boolean isActive = i < control.getLevel(AudioManager.STREAM_MUSIC);
+            RemoteViews sliderItemView = new RemoteViews(
+                    context.getPackageName(),
+                    isActive ? R.layout.notificatiion_slider_active : R.layout.notificatiion_slider_inactive
+            );
+            int requestId = VOLUME_ID_PREFIX + i * 100 + AudioManager.STREAM_MUSIC;
+
+            sliderItemView.setOnClickPendingIntent(
+                    R.id.notification_slider_item,
+                    PendingIntent.getService(
+                            context,
+                            requestId ,
+                            setVolumeIntent(context, AudioManager.STREAM_MUSIC, i),
+                            PendingIntent.FLAG_UPDATE_CURRENT)
+            );
+            remoteViews.addView(R.id.media_settings, sliderItemView);
+        }
+
+        remoteViews.setOnClickPendingIntent(
+                R.id.media_up,
+                PendingIntent.getService(
+                        context,
+                        VOLUME_ID_PREFIX +  10 + AudioManager.STREAM_MUSIC ,
+                        setVolumeIntent(context, AudioManager.STREAM_MUSIC, control.getLevel(AudioManager.STREAM_MUSIC) + 1),
+                        PendingIntent.FLAG_UPDATE_CURRENT)
+        );
+
+        remoteViews.setOnClickPendingIntent(
+                R.id.media_down,
+                PendingIntent.getService(
+                        context,
+                        VOLUME_ID_PREFIX +  20 + AudioManager.STREAM_MUSIC,
+                        setVolumeIntent(context, AudioManager.STREAM_MUSIC, control.getLevel(AudioManager.STREAM_MUSIC) -1),
+                        PendingIntent.FLAG_UPDATE_CURRENT)
+        );
 
         remoteViews.setOnClickPendingIntent(R.id.remove_notification_action, PendingIntent.getService(context, 100, getStopIntent(context), 0));
 
@@ -144,7 +199,10 @@ public class SoundService extends Service {
 
     private static String APPLY_PROFILE_ACTION = "APPLY_PROFILE";
     private static String STOP_ACTION = "STOP_ACTION";
+    private static String CHANGE_VOLUME_ACTION = "CHANGE_VOLUME_ACTION";
     private static String PROFILE_ID = "PROFILE_ID";
+    private static String EXTRA_VOLUME = "EXTRA_VOLUME";
+    private static String EXTRA_TYPE = "EXTRA_TYPE";
 
     public static Intent getIntentForProfile(Context content, SoundProfile profile) {
         Intent result = new Intent(content, SoundService.class);
@@ -156,6 +214,14 @@ public class SoundService extends Service {
     public static Intent getStopIntent(Context content) {
         Intent result = new Intent(content, SoundService.class);
         result.setAction(STOP_ACTION);
+        return result;
+    }
+
+    public static Intent setVolumeIntent(Context context, int typeId, int value) {
+        Intent result = new Intent(context, SoundService.class);
+        result.setAction(CHANGE_VOLUME_ACTION);
+        result.putExtra(EXTRA_VOLUME, value);
+        result.putExtra(EXTRA_TYPE, typeId);
         return result;
     }
 }
