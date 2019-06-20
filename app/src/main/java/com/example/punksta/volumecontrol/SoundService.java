@@ -11,6 +11,7 @@ import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import com.example.punksta.volumecontrol.data.SoundProfile;
@@ -31,6 +32,7 @@ public class SoundService extends Service {
             updateNotification();
         }
     };
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -76,7 +78,7 @@ public class SoundService extends Service {
             int volume = intent.getIntExtra(EXTRA_VOLUME, 0);
             control.setVolumeLevel(type, volume);
             return START_STICKY;
-        } else {
+        } else if (FOREGROUND_ACTION.equals(action)) {
             soundProfileStorage.addListener(listener);
             createStaticNotificationChannel();
             try {
@@ -84,7 +86,11 @@ public class SoundService extends Service {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            control.registerVolumeListener(AudioManager.STREAM_MUSIC, voluleListener, false);
+            control.registerVolumeListener(AudioManager.STREAM_RING, voluleListener, false);
             return START_NOT_STICKY;
+        } else {
+            return super.onStartCommand(intent, flags, startId);
         }
     }
 
@@ -102,7 +108,6 @@ public class SoundService extends Service {
         soundProfileStorage = SoundProfileStorage.getInstance(this);
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         control = new VolumeControl(this, new Handler());
-        control.registerVolumeListener(AudioManager.STREAM_MUSIC, voluleListener, false);
     }
 
     private void createStaticNotificationChannel() {
@@ -123,12 +128,19 @@ public class SoundService extends Service {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.notification_volume_slider);
         views.removeAllViews(R.id.volume_slider);
 
-        for (int i = 0; i < control.getMaxLevel(typeId); i++) {
+        int maxLevel = control.getMaxLevel(typeId);
+
+        for (int i = 0; i < maxLevel; i++) {
             boolean isActive = i < control.getLevel(typeId);
             RemoteViews sliderItemView = new RemoteViews(
                     context.getPackageName(),
                     isActive ? R.layout.notificatiion_slider_active : R.layout.notificatiion_slider_inactive
             );
+
+            if (i +1 == maxLevel) {
+                sliderItemView.setViewVisibility(R.id.deliver_item, View.GONE);
+            }
+
             int requestId = VOLUME_ID_PREFIX + i * 100 + typeId;
 
             sliderItemView.setOnClickPendingIntent(
@@ -143,7 +155,7 @@ public class SoundService extends Service {
         }
 
 
-        views.setTextViewText(R.id.volume_title, typeName);
+        views.setTextViewText(R.id.volume_title, typeName.toString().toLowerCase());
 
         views.setOnClickPendingIntent(
                 R.id.volume_up,
@@ -219,6 +231,8 @@ public class SoundService extends Service {
     private static String APPLY_PROFILE_ACTION = "APPLY_PROFILE";
     private static String STOP_ACTION = "STOP_ACTION";
     private static String CHANGE_VOLUME_ACTION = "CHANGE_VOLUME_ACTION";
+    private static String FOREGROUND_ACTION = "FOREGROUND_ACTION";
+
     private static String PROFILE_ID = "PROFILE_ID";
     private static String EXTRA_VOLUME = "EXTRA_VOLUME";
     private static String EXTRA_TYPE = "EXTRA_TYPE";
@@ -241,6 +255,13 @@ public class SoundService extends Service {
         result.setAction(CHANGE_VOLUME_ACTION);
         result.putExtra(EXTRA_VOLUME, value);
         result.putExtra(EXTRA_TYPE, typeId);
+        return result;
+    }
+
+
+    public static Intent getIntentForForeground(Context context) {
+        Intent result = new Intent(context, SoundService.class);
+        result.setAction(FOREGROUND_ACTION);
         return result;
     }
 }

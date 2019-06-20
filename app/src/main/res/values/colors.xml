@@ -8,4 +8,9 @@
     <color name="colorPrimary_dark">#4E4E4E</color>
     <color name="colorPrimaryDark_dark">#121212</color>
     <color name="colorAccent_dark">#BB86FC</color>
+
+
+    <color name="notification_slider_active_background">#4D5CB3</color>
+    <color name="notification_slider_inactive_background">#ADB8EB</color>
+
 </resources>

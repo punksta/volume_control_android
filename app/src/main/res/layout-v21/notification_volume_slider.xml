@@ -1,57 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    android:layout_marginTop="8dp"
-    android:gravity="center_vertical"
-    android:layout_below="@+id/app_icon"
-    android:orientation="horizontal"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_marginBottom="4dp"
+    android:layout_below="@+id/app_icon"
+    android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/volume_title"
-        android:textAppearance="@android:style/TextAppearance.Material.Notification"
-        android:textSize="17sp"
-        android:minWidth="50dp"
-        android:textStyle="normal"
-        android:layout_marginEnd="8dp"
-        android:text="@string/volumeType_media"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:text="-"
-        android:id="@+id/volume_down"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:background="#ddd"
-        android:textColor="@android:color/black"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:layout_width="30dp"
-        android:layout_height="wrap_content" />
 
 
     <LinearLayout
-        android:background="@drawable/notification_slider"
-        android:orientation="horizontal"
-        android:layout_weight="1"
-        android:id="@+id/volume_slider"
+        android:background="#ADB8EB"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
+        <TextView
+            android:id="@+id/volume_down"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:background="#ddd"
+            android:gravity="center"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="-"
+            android:textColor="@android:color/black"
+            android:textSize="25sp" />
+
+
+        <LinearLayout
+            android:id="@+id/volume_slider"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/notification_slider"
+            android:orientation="horizontal" />
+
+
+        <TextView
+            android:id="@+id/volume_up"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:background="#ddd"
+            android:gravity="center"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="+"
+            android:textColor="@android:color/black"
+            android:textSize="25sp" />
+    </LinearLayout>
 
     <TextView
-        android:background="#ddd"
-        android:id="@+id/volume_up"
-        android:text="+"
-        android:textColor="@android:color/black"
+        android:fontFamily="sans-serif-"
+        android:layout_gravity="center"
         android:gravity="center"
-        android:textSize="20sp"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:layout_width="30dp"
-        android:layout_height="wrap_content" />
+        android:id="@+id/volume_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="50dp"
+        android:text="@string/volumeType_media"
+        android:textAppearance="@android:style/TextAppearance.Material.Notification"
+        android:textSize="17sp"
+        android:textStyle="normal" />
 
-</LinearLayout>
+
+</FrameLayout>

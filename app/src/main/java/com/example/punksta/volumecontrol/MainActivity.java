@@ -200,7 +200,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void startSoundService() {
-        Intent i = new Intent(this, SoundService.class);
+        Intent i = SoundService.getIntentForForeground(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(i);
