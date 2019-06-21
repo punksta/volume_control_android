@@ -129,26 +129,32 @@ public class SoundService extends Service {
         views.removeAllViews(R.id.volume_slider);
 
         int maxLevel = control.getMaxLevel(typeId);
+        int currentLevel = control.getLevel(typeId);
 
-        for (int i = 0; i < maxLevel; i++) {
-            boolean isActive = i < control.getLevel(typeId);
+        int maxSliderLevel = Math.min(maxLevel, 8);
+
+        for (int i = 0; i < maxSliderLevel; i++) {
+
+            int volumeLevel = (maxLevel * i) / maxSliderLevel;
+
+            boolean isActive = volumeLevel < control.getLevel(typeId);
             RemoteViews sliderItemView = new RemoteViews(
                     context.getPackageName(),
                     isActive ? R.layout.notificatiion_slider_active : R.layout.notificatiion_slider_inactive
             );
 
-            if (i +1 == maxLevel) {
+            if (i + 1 == maxSliderLevel) {
                 sliderItemView.setViewVisibility(R.id.deliver_item, View.GONE);
             }
 
-            int requestId = VOLUME_ID_PREFIX + i * 100 + typeId;
+            int requestId = VOLUME_ID_PREFIX + volumeLevel * 100 + typeId;
 
             sliderItemView.setOnClickPendingIntent(
                     R.id.notification_slider_item,
                     PendingIntent.getService(
                             context,
                             requestId,
-                            setVolumeIntent(context, typeId, i + 1),
+                            setVolumeIntent(context, typeId, volumeLevel + 1),
                             PendingIntent.FLAG_UPDATE_CURRENT)
             );
             views.addView(R.id.volume_slider, sliderItemView);
@@ -157,12 +163,15 @@ public class SoundService extends Service {
 
         views.setTextViewText(R.id.volume_title, typeName.toString().toLowerCase());
 
+        float delta = maxLevel / (float) maxSliderLevel;
+
+
         views.setOnClickPendingIntent(
                 R.id.volume_up,
                 PendingIntent.getService(
                         context,
                         VOLUME_ID_PREFIX + 10 + typeId,
-                        setVolumeIntent(context, typeId, control.getLevel(typeId) + 1),
+                        setVolumeIntent(context, typeId, (int) Math.ceil(currentLevel + delta)),
                         PendingIntent.FLAG_UPDATE_CURRENT)
         );
 
@@ -171,7 +180,7 @@ public class SoundService extends Service {
                 PendingIntent.getService(
                         context,
                         VOLUME_ID_PREFIX + 20 + typeId,
-                        setVolumeIntent(context, typeId, control.getLevel(typeId) - 1),
+                        setVolumeIntent(context, typeId, (int) Math.floor(currentLevel - delta)),
                         PendingIntent.FLAG_UPDATE_CURRENT)
         );
 
@@ -184,6 +193,7 @@ public class SoundService extends Service {
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_view);
         remoteViews.removeAllViews(R.id.notifications_user_profiles);
+
 
         for (SoundProfile profile : profiles) {
             RemoteViews profileViews = new RemoteViews(context.getPackageName(), R.layout.notification_profile_name);
@@ -205,7 +215,6 @@ public class SoundService extends Service {
             remoteViews.addView(R.id.volume_sliders, buildVolumeSlider(context, control, notificationType.audioStreamName, context.getString(notificationType.nameId)));
         }
 
-
         remoteViews.setOnClickPendingIntent(R.id.remove_notification_action, PendingIntent.getService(context, 100, getStopIntent(context), 0));
 
         builder
@@ -216,6 +225,7 @@ public class SoundService extends Service {
                 .setSmallIcon(R.drawable.notification_icon)
                 .setTicker(context.getString(R.string.app_name))
                 .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0));
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder.setChannelId(staticNotificationId);

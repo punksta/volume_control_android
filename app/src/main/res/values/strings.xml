@@ -29,7 +29,7 @@
     <string name="silence">silence</string>
     <string name="vibrate">vibrate</string>
     <string name="ring">ring</string>
-    <string name="notification_widget">Click to open</string>
+    <string name="notification_widget">Click to open app, swipe done to extend</string>
     <string name="settings.notification_widget">Notification widget</string>
 
 
