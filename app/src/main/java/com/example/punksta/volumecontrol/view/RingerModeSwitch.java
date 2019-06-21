@@ -8,11 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
-import android.widget.Switch;
 
 import com.example.punksta.volumecontrol.R;
-
-import java.util.function.Function;
 
 public class RingerModeSwitch extends FrameLayout {
     private SeekBar ringSwitch;

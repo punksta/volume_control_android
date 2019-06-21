@@ -176,15 +176,12 @@ public class MainActivity extends BaseActivity {
 
         notificationSwitch.setChecked(isNotificationWidgetEnabled());
 
-        notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setNotificationWidgetEnabled(isChecked);
-                if (isChecked) {
-                    startSoundService();
-                } else {
-                    stopSoundService();
-                }
+        notificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            setNotificationWidgetEnabled(isChecked);
+            if (isChecked) {
+                startSoundService();
+            } else {
+                stopSoundService();
             }
         });
         try {
