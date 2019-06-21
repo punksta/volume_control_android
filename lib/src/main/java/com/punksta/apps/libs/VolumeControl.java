@@ -25,7 +25,7 @@ public class VolumeControl {
     private final Set<RingerModeChangelistener> ringerModeListeners = new HashSet<>();
 
     private final IntentFilter intentFilter;
-    private AudioObserver audioObserver = new AudioObserver();
+    private AudioObserver audioObserver;
     private final Handler handler;
 
     private boolean ignoreUpdates = false;
@@ -52,7 +52,13 @@ public class VolumeControl {
     public void unregisterAll() {
         listenerSet.clear();
         ringerModeListeners.clear();
-        context.unregisterReceiver(audioObserver);
+        try {
+            if (audioObserver != null) {
+                context.unregisterReceiver(audioObserver);
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     public void setVolumeLevel(int type, int index) {
@@ -90,6 +96,9 @@ public class VolumeControl {
             listenerSet.get(type).add(volumeListener);
         }
         if (firstAudioType) {
+            if (audioObserver == null) {
+                audioObserver = new AudioObserver();
+            }
             context.registerReceiver(audioObserver, intentFilter);
         }
 
@@ -103,11 +112,15 @@ public class VolumeControl {
         }
         if (listenerSet.get(type).size() == 0) {
             listenerSet.remove(type);
-            audioObserver.lastVolumes.remove(type);
+            if (audioObserver != null) {
+                audioObserver.lastVolumes.remove(type);
+            }
         }
 
-        if (listenerSet.isEmpty())
+        if (listenerSet.isEmpty() && audioObserver != null) {
             context.unregisterReceiver(audioObserver);
+            audioObserver = null;
+        }
     }
 
     public interface VolumeListener {
