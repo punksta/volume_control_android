@@ -1,13 +1,11 @@
 package com.example.punksta.volumecontrol;
 
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.Menu;
@@ -15,13 +13,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.punksta.volumecontrol.data.SoundProfile;
+import com.example.punksta.volumecontrol.util.DNDModeChecker;
 import com.example.punksta.volumecontrol.util.DynamicShortcutManager;
 import com.example.punksta.volumecontrol.util.SoundProfileStorage;
 import com.example.punksta.volumecontrol.view.RingerModeSwitch;
@@ -36,13 +34,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.example.punksta.volumecontrol.EditProfileActivity.REQUEST_CODE_NEW_PROFILE;
+import static com.example.punksta.volumecontrol.util.DNDModeChecker.isDNDPermisionGranded;
+import static com.example.punksta.volumecontrol.util.DNDModeChecker.showDNDPermissionAlert;
 
 public class MainActivity extends BaseActivity {
 
     private List<TypeListener> volumeListeners = new ArrayList<>();
-    private NotificationManager notificationManager;
-    private boolean ignoreRequests = false;
-    private Handler mHandler = new Handler();
     private SoundProfileStorage profileStorage;
 
     private boolean goingGoFinish = false;
@@ -219,7 +216,7 @@ public class MainActivity extends BaseActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (isNotificationWidgetEnabled()) {
+        if (isNotificationWidgetEnabled() && isDNDPermisionGranded(this)) {
             startSoundService();
         }
     }
@@ -289,27 +286,12 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private Runnable unsetIgnoreRequests = () -> ignoreRequests = false;
-
     private void requireChangeVolume(AudioType audioType, int volume) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
-                !notificationManager.isNotificationPolicyAccessGranted()) {
-            mHandler.postDelayed(unsetIgnoreRequests, 1000);
-            if (!ignoreRequests) {
-                Intent intent = new Intent(
-                        android.provider.Settings
-                                .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-
-                startActivity(intent);
-                ignoreRequests = true;
-            }
-        } else {
-            try {
-                control.setVolumeLevel(audioType.audioStreamName, volume);
-            } catch (Throwable throwable) {
-                Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                throwable.printStackTrace();
-            }
+        try {
+            control.setVolumeLevel(audioType.audioStreamName, volume);
+        } catch (Throwable throwable) {
+            Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+            throwable.printStackTrace();
         }
     }
 
@@ -317,7 +299,9 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (!DNDModeChecker.isDNDPermisionGranded(this)) {
+            showDNDPermissionAlert(this);
+        }
         for (TypeListener listener : volumeListeners)
             control.registerVolumeListener(listener.type, listener, true);
     }
@@ -327,8 +311,6 @@ public class MainActivity extends BaseActivity {
         super.onStop();
         for (TypeListener volumeListener : volumeListeners)
             control.unRegisterVolumeListener(volumeListener.type, volumeListener);
-        ignoreRequests = false;
-        mHandler.removeCallbacks(unsetIgnoreRequests);
     }
 
     @Override

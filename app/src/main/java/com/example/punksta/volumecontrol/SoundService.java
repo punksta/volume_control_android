@@ -13,8 +13,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.view.View;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.example.punksta.volumecontrol.data.SoundProfile;
+import com.example.punksta.volumecontrol.util.DNDModeChecker;
 import com.example.punksta.volumecontrol.util.ProfileApplier;
 import com.example.punksta.volumecontrol.util.SoundProfileStorage;
 import com.punksta.apps.libs.VolumeControl;
@@ -61,6 +63,11 @@ public class SoundService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         String action = intent != null ? intent.getAction() : null;
+
+        if (!DNDModeChecker.isDNDPermisionGranded(this) && !STOP_ACTION.equals(action)) {
+            Toast.makeText(this, getString(R.string.dnd_permission_title), Toast.LENGTH_LONG).show();
+            return super.onStartCommand(intent, flags, startId);
+        }
 
         if (APPLY_PROFILE_ACTION.equals(action)) {
             try {

@@ -31,6 +31,8 @@
     <string name="ring">ring</string>
     <string name="notification_widget">Click to open app, swipe done to extend</string>
     <string name="settings.notification_widget">Notification widget</string>
+    <string name="dnd_permission_title">The app requires Do Not Disturb access permission.</string>
+    <string name="dnd_permission_message">This permission is required in order to change volume and select sound profiles in Do Not Disturb mode</string>
 
 
     <string-array name="vibrate_settings">
