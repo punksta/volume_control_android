@@ -1,4 +1,4 @@
-package com.example.punksta.volumecontrol.util;
+package com.example.punksta.volumecontrol.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;

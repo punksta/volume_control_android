@@ -1,13 +1,16 @@
 package com.example.punksta.volumecontrol;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,12 +19,13 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.punksta.volumecontrol.data.SoundProfile;
 import com.example.punksta.volumecontrol.util.DNDModeChecker;
 import com.example.punksta.volumecontrol.util.DynamicShortcutManager;
-import com.example.punksta.volumecontrol.util.SoundProfileStorage;
+import com.example.punksta.volumecontrol.model.SoundProfileStorage;
 import com.example.punksta.volumecontrol.view.RingerModeSwitch;
 import com.example.punksta.volumecontrol.view.VolumeProfileView;
 import com.example.punksta.volumecontrol.view.VolumeSliderView;
@@ -30,6 +34,7 @@ import com.punksta.apps.libs.VolumeControl;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -104,6 +109,45 @@ public class MainActivity extends BaseActivity {
     }
 
 
+    private void renderVolumeTypesInNotificationWidget() {
+        List<AudioType> allThings = AudioType.getAudioTypes(true);
+
+        TextView volumeTypesToShow = findViewById(R.id.types_to_show_in_profile);
+
+        volumeTypesToShow.setOnClickListener(view -> {
+
+            List<Integer> checked = new ArrayList<>(Arrays.asList(settings.volumeTypesToShow));
+
+            CharSequence[] titles = new CharSequence[allThings.size()];
+            boolean[] isCheckedArray = new boolean[allThings.size()];
+
+            for (int i = 0; i < allThings.size(); i++) {
+                titles[i] = getString(allThings.get(i).nameId);
+                isCheckedArray[i] = checked.contains(allThings.get(i).audioStreamName);
+            }
+
+
+            new AlertDialog.Builder(this,
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
+                            android.R.style.Theme_Material_Dialog_Alert : android.R.style.Theme_Holo_Dialog
+                    )
+                    .setMultiChoiceItems(titles, isCheckedArray, (dialogInterface, i, b) -> {
+                        if (b) {
+                            checked.add(allThings.get(i).audioStreamName);
+                        } else {
+                            checked.remove(Integer.valueOf(allThings.get(i).audioStreamName));
+                        }
+                    })
+                    .setPositiveButton("save", (dialogInterface, i) -> {
+                        setVolumeTypesToShowInWidget(checked.toArray(new Integer[0]));
+                        startSoundService();
+                    })
+                    .show();
+
+        });
+
+    }
+
     private void buildUi() {
         LinearLayout scrollView = findViewById(R.id.audio_types_holder);
         scrollView.removeAllViews();
@@ -173,14 +217,33 @@ public class MainActivity extends BaseActivity {
 
         notificationSwitch.setChecked(isNotificationWidgetEnabled());
 
+        Switch profilesSwitch = findViewById(R.id.notification_widget_profiles);
+
+        profilesSwitch.setChecked(settings.showProfilesInNotification);
+
+        profilesSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            setNotificationProfiles(isChecked);
+            startSoundService();
+        });
+        TextView volumeTypesToShow = findViewById(R.id.types_to_show_in_profile);
+
+        renderVolumeTypesInNotificationWidget();
+
+        profilesSwitch.setVisibility(isNotificationWidgetEnabled() ? View.VISIBLE: View.GONE);
+        volumeTypesToShow.setVisibility(isNotificationWidgetEnabled() ? View.VISIBLE: View.GONE);
+
         notificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             setNotificationWidgetEnabled(isChecked);
+            profilesSwitch.setVisibility(isChecked ? View.VISIBLE: View.GONE);
+            volumeTypesToShow.setVisibility(isChecked ? View.VISIBLE: View.GONE);
             if (isChecked) {
                 startSoundService();
             } else {
                 stopSoundService();
             }
         });
+
+
         try {
             renderProfiles();
         } catch (JSONException e) {
@@ -194,7 +257,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void startSoundService() {
-        Intent i = SoundService.getIntentForForeground(this);
+        Intent i = SoundService.getIntentForForeground(this, settings);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(i);

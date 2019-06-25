@@ -15,15 +15,18 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.example.punksta.volumecontrol.data.Settings;
 import com.example.punksta.volumecontrol.data.SoundProfile;
 import com.example.punksta.volumecontrol.util.DNDModeChecker;
 import com.example.punksta.volumecontrol.util.ProfileApplier;
-import com.example.punksta.volumecontrol.util.SoundProfileStorage;
+import com.example.punksta.volumecontrol.model.SoundProfileStorage;
 import com.punksta.apps.libs.VolumeControl;
 
 import org.json.JSONException;
 
-import static com.example.punksta.volumecontrol.AudioType.getNotificationTypes;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class SoundService extends Service {
@@ -35,6 +38,8 @@ public class SoundService extends Service {
         }
     };
 
+    private Integer[] profilesToShow = null;
+    private boolean showProfiles = false;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -53,10 +58,18 @@ public class SoundService extends Service {
 
     private void updateNotification() {
         try {
-            manager.notify(staticNotificationNumber, buildForegroundNotification(SoundService.this, soundProfileStorage.loadAll(), control));
+            manager.notify(
+                    staticNotificationNumber,
+                    buildForegroundNotification(
+                            this,
+                            showProfiles ? soundProfileStorage.loadAll() : new SoundProfile[0],
+                            control,
+                            profilesToShow
+                    )
+            );
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        };
     }
 
     @Override
@@ -88,13 +101,21 @@ public class SoundService extends Service {
         } else if (FOREGROUND_ACTION.equals(action)) {
             soundProfileStorage.addListener(listener);
             createStaticNotificationChannel();
+            showProfiles = intent.getBooleanExtra(EXTRA_SHOW_PROFILES, true);
+            profilesToShow = (Integer[]) intent.getSerializableExtra(EXTRA_VOLUME_TYPES_IDS);
+
             try {
-                startForeground(staticNotificationNumber, buildForegroundNotification(this, soundProfileStorage.loadAll(), control));
+                startForeground(
+                        staticNotificationNumber,
+                        buildForegroundNotification(this, showProfiles ? soundProfileStorage.loadAll() : new SoundProfile[0], control, profilesToShow)
+                );
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            control.registerVolumeListener(AudioManager.STREAM_MUSIC, voluleListener, false);
-            control.registerVolumeListener(AudioManager.STREAM_RING, voluleListener, false);
+
+            for (Integer id : profilesToShow) {
+                control.registerVolumeListener(id, voluleListener, false);
+            }
             return START_NOT_STICKY;
         } else {
             return super.onStartCommand(intent, flags, startId);
@@ -194,36 +215,45 @@ public class SoundService extends Service {
         return views;
     }
 
-    private static Notification buildForegroundNotification(Context context, SoundProfile[] profiles, VolumeControl control) {
+    private static Notification buildForegroundNotification(
+            Context context,
+            SoundProfile[] profiles,
+            VolumeControl control,
+            Integer[] volumeTypesToShow
+    ) {
         Notification.Builder builder = new Notification.Builder(context);
 
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_view);
-        remoteViews.removeAllViews(R.id.notifications_user_profiles);
+        if (profiles != null) {
+            remoteViews.removeAllViews(R.id.notifications_user_profiles);
+            for (SoundProfile profile : profiles) {
+                RemoteViews profileViews = new RemoteViews(context.getPackageName(), R.layout.notification_profile_name);
+                profileViews.setTextViewText(R.id.notification_profile_title, profile.name);
+                Intent i = getIntentForProfile(context, profile);
+                PendingIntent pendingIntent;
 
+                int requestId = PROFILE_ID_PREFIX + profile.id;
 
-        for (SoundProfile profile : profiles) {
-            RemoteViews profileViews = new RemoteViews(context.getPackageName(), R.layout.notification_profile_name);
-            profileViews.setTextViewText(R.id.notification_profile_title, profile.name);
-            Intent i = getIntentForProfile(context, profile);
-            PendingIntent pendingIntent;
-
-            int requestId = PROFILE_ID_PREFIX + profile.id;
-
-            pendingIntent = PendingIntent.getService(context, requestId, i, 0);
-            profileViews.setOnClickPendingIntent(R.id.notification_profile_title, pendingIntent);
-            remoteViews.addView(R.id.notifications_user_profiles, profileViews);
+                pendingIntent = PendingIntent.getService(context, requestId, i, 0);
+                profileViews.setOnClickPendingIntent(R.id.notification_profile_title, pendingIntent);
+                remoteViews.addView(R.id.notifications_user_profiles, profileViews);
+            }
         }
 
+        if (volumeTypesToShow != null) {
+            remoteViews.removeAllViews(R.id.volume_sliders);
 
-        remoteViews.removeAllViews(R.id.volume_sliders);
+            Set<Integer> volumes = new HashSet<>(Arrays.asList(volumeTypesToShow));
 
-        for (AudioType notificationType : getNotificationTypes()) {
-            remoteViews.addView(R.id.volume_sliders, buildVolumeSlider(context, control, notificationType.audioStreamName, context.getString(notificationType.nameId)));
+            for (AudioType notificationType : AudioType.getAudioTypes(true)) {
+                if (volumes.contains(notificationType.audioStreamName)) {
+                    remoteViews.addView(R.id.volume_sliders, buildVolumeSlider(context, control, notificationType.audioStreamName, context.getString(notificationType.nameId)));
+                }
+            }
+
+            remoteViews.setOnClickPendingIntent(R.id.remove_notification_action, PendingIntent.getService(context, 100, getStopIntent(context), 0));
         }
-
-        remoteViews.setOnClickPendingIntent(R.id.remove_notification_action, PendingIntent.getService(context, 100, getStopIntent(context), 0));
-
         builder
                 .setContentTitle(context.getString(R.string.app_name))
                 .setOngoing(true)
@@ -236,7 +266,10 @@ public class SoundService extends Service {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder.setChannelId(staticNotificationId);
-            builder.setCustomBigContentView(remoteViews);
+            if ((volumeTypesToShow != null && volumeTypesToShow.length > 0) || (profiles != null && profiles.length > 0)) {
+                builder.setContentText(context.getString(R.string.notification_widget_featured))
+                    .setCustomBigContentView(remoteViews);
+            }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             return (builder.build());
@@ -253,6 +286,9 @@ public class SoundService extends Service {
     private static String PROFILE_ID = "PROFILE_ID";
     private static String EXTRA_VOLUME = "EXTRA_VOLUME";
     private static String EXTRA_TYPE = "EXTRA_TYPE";
+    private static String EXTRA_SHOW_PROFILES = "EXTRA_SHOW_PROFILES";
+    private static String EXTRA_VOLUME_TYPES_IDS = "EXTRA_VOLUME_TYPES_IDS";
+
 
     public static Intent getIntentForProfile(Context content, SoundProfile profile) {
         Intent result = new Intent(content, SoundService.class);
@@ -276,9 +312,11 @@ public class SoundService extends Service {
     }
 
 
-    public static Intent getIntentForForeground(Context context) {
+    public static Intent getIntentForForeground(Context context, Settings settings) {
         Intent result = new Intent(context, SoundService.class);
         result.setAction(FOREGROUND_ACTION);
+        result.putExtra(EXTRA_SHOW_PROFILES, settings.showProfilesInNotification);
+        result.putExtra(EXTRA_VOLUME_TYPES_IDS, settings.volumeTypesToShow);
         return result;
     }
 }
