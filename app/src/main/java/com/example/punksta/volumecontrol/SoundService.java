@@ -95,8 +95,15 @@ public class SoundService extends Service {
             return super.onStartCommand(intent, flags, startId);
         } else if (CHANGE_VOLUME_ACTION.equals(action)) {
             int type = intent.getIntExtra(EXTRA_TYPE, 0);
-            int volume = intent.getIntExtra(EXTRA_VOLUME, 0);
-            control.setVolumeLevel(type, volume);
+            if (intent.hasExtra(EXTRA_VOLUME)) {
+                int volume = intent.getIntExtra(EXTRA_VOLUME, 0);
+                control.setVolumeLevel(type, volume);
+            } else {
+                float delta = intent.getFloatExtra(EXTRA_VOLUME_DELTA, 0);
+                int currentVolume = control.getLevel(type);
+                int nextVolume = (int) (delta > 0 ?  Math.ceil(currentVolume + delta) : Math.floor(currentVolume + delta));
+                control.setVolumeLevel(type, nextVolume);
+            }
             return START_STICKY;
         } else if (FOREGROUND_ACTION.equals(action)) {
             soundProfileStorage.addListener(listener);
@@ -157,7 +164,6 @@ public class SoundService extends Service {
         views.removeAllViews(R.id.volume_slider);
 
         int maxLevel = control.getMaxLevel(typeId);
-        int currentLevel = control.getLevel(typeId);
 
         int maxSliderLevel = Math.min(maxLevel, 8);
 
@@ -199,7 +205,7 @@ public class SoundService extends Service {
                 PendingIntent.getService(
                         context,
                         VOLUME_ID_PREFIX + 10 + typeId,
-                        setVolumeIntent(context, typeId, (int) Math.ceil(currentLevel + delta)),
+                        setVolumeByDeltaIntent(context, typeId, delta),
                         PendingIntent.FLAG_UPDATE_CURRENT)
         );
 
@@ -208,7 +214,7 @@ public class SoundService extends Service {
                 PendingIntent.getService(
                         context,
                         VOLUME_ID_PREFIX + 20 + typeId,
-                        setVolumeIntent(context, typeId, (int) Math.floor(currentLevel - delta)),
+                        setVolumeByDeltaIntent(context, typeId, -delta),
                         PendingIntent.FLAG_UPDATE_CURRENT)
         );
 
@@ -283,6 +289,7 @@ public class SoundService extends Service {
 
     private static String PROFILE_ID = "PROFILE_ID";
     private static String EXTRA_VOLUME = "EXTRA_VOLUME";
+    private static String EXTRA_VOLUME_DELTA = "EXTRA_VOLUME_DELTA";
     private static String EXTRA_TYPE = "EXTRA_TYPE";
     private static String EXTRA_SHOW_PROFILES = "EXTRA_SHOW_PROFILES";
     private static String EXTRA_VOLUME_TYPES_IDS = "EXTRA_VOLUME_TYPES_IDS";
@@ -298,6 +305,14 @@ public class SoundService extends Service {
     public static Intent getStopIntent(Context content) {
         Intent result = new Intent(content, SoundService.class);
         result.setAction(STOP_ACTION);
+        return result;
+    }
+
+    public static Intent setVolumeByDeltaIntent(Context context, int typeId, float delta) {
+        Intent result = new Intent(context, SoundService.class);
+        result.setAction(CHANGE_VOLUME_ACTION);
+        result.putExtra(EXTRA_VOLUME_DELTA, delta);
+        result.putExtra(EXTRA_TYPE, typeId);
         return result;
     }
 
