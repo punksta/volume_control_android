@@ -391,15 +391,6 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    private void onSilenceModeRequested() {
-        for (AudioType a : AudioType.getAudioTypes(isExtendedVolumesEnabled())) {
-            requireChangeVolume(a, control.getMinLevel(a.audioStreamName));
-        }
-        // control.requestRindgerMode(AudioManager.RINGER_MODE_SILENT);
-
-    }
-
-
     private void onFullVolumeModeRequested() {
         for (AudioType a : AudioType.getAudioTypes(isExtendedVolumesEnabled())) {
             requireChangeVolume(a, control.getMaxLevel(a.audioStreamName));
@@ -413,24 +404,6 @@ public class MainActivity extends BaseActivity {
         }
         // control.requestRindgerMode(AudioManager.RINGER_MODE_VIBRATE);
 
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.main_menu_silence:
-                onSilenceModeRequested();
-                return true;
-            case R.id.main_menu_full_volume:
-                onFullVolumeModeRequested();
-                return true;
-            case R.id.main_menu_vibrate:
-                onVibrateModeRequested();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override
@@ -447,13 +420,6 @@ public class MainActivity extends BaseActivity {
             default:
                 super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_screen, menu);
-        return true;
     }
 
     public static final String PROFILE_ID = "PROFILE_ID";
