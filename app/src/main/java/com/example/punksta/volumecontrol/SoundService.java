@@ -159,7 +159,7 @@ public class SoundService extends Service {
     private static final int VOLUME_ID_PREFIX = 100;
 
 
-    private static RemoteViews buildVolumeSlider(Context context, VolumeControl control, int typeId, CharSequence typeName) {
+    private static RemoteViews buildVolumeSlider(Context context, VolumeControl control, int typeId, String typeName) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.notification_volume_slider);
         views.removeAllViews(R.id.volume_slider);
 
@@ -195,7 +195,7 @@ public class SoundService extends Service {
         }
 
 
-        views.setTextViewText(R.id.volume_title, typeName.toString().toLowerCase());
+        views.setTextViewText(R.id.volume_title, capitalize(typeName));
 
         float delta = maxLevel / (float) maxSliderLevel;
 
@@ -280,6 +280,10 @@ public class SoundService extends Service {
         } else {
             return builder.getNotification();
         }
+    }
+
+    private static String capitalize(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
     private static String APPLY_PROFILE_ACTION = "APPLY_PROFILE";

@@ -10,9 +10,9 @@
     <color name="colorAccent_dark">#BB86FC</color>
 
 
-    <color name="notification_slider_active_background">#0097A7</color>
-    <color name="notification_slider_inactive_background">#B2EBF2</color>
+    <color name="notification_slider_active_background">#A88FD8</color>
+    <color name="notification_slider_inactive_background">@android:color/white</color>
     <color name="notification_deliver_color">#52000000</color>
-    <color name="notification_volule_title_color">#2C2C2C</color>
+    <color name="notification_volule_title_color">#363030</color>
 
 </resources>
