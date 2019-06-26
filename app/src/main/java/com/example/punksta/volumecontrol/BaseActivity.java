@@ -33,7 +33,11 @@ abstract public class BaseActivity extends Activity {
     protected void setThemeAndRecreate(boolean isDarkTheme) {
         this.settings.isDarkThemeEnabled = isDarkTheme;
         settingsStorage.save(this.settings);
-      this.recreate();
+        recreateActivity();
+    }
+
+    protected void recreateActivity() {
+        this.recreate();
     }
 
     protected void setExtendedVolumesEnabled(boolean isEnabled) {
@@ -73,7 +77,7 @@ abstract public class BaseActivity extends Activity {
         super.onStart();
         boolean currentTheme = settingsStorage.settings().isDarkThemeEnabled;
         if (currentTheme != this.settings.isDarkThemeEnabled) {
-            recreate();
+            recreateActivity();
         }
     }
 }

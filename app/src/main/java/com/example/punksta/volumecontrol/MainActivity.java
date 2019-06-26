@@ -366,6 +366,16 @@ public class MainActivity extends BaseActivity {
             control.registerVolumeListener(listener.type, listener, true);
     }
 
+
+    @Override
+    protected void recreateActivity() {
+        Intent intent = new Intent(this, this.getClass());
+        finish();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        startActivity(intent);
+
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
