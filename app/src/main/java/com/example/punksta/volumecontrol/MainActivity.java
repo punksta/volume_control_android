@@ -1,5 +1,6 @@
 package com.example.punksta.volumecontrol;
 
+import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -139,12 +140,69 @@ public class MainActivity extends BaseActivity {
                     .show();
 
         });
+    }
 
+    @Override
+    protected void setExtendedVolumesEnabled(boolean isEnabled) {
+        super.setExtendedVolumesEnabled(isEnabled);
+        renderProfileItems();
+    }
+
+    private void renderProfileItems() {
+        View title = findViewById(R.id.audio_types_holder_title);
+        ViewGroup titlesGroup = findViewById(R.id.linearLayout);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            titlesGroup.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+        }
+
+        int indexOfTitle = titlesGroup.indexOfChild(title);
+
+        List<AudioType> audioTypes = AudioType.getAudioTypes(true);
+
+        if (!Boolean.TRUE.equals(title.getTag())) {
+            for (int i = 0; i < audioTypes.size(); i++) {
+                AudioType type = audioTypes.get(i);
+
+                final VolumeSliderView volumeSliderView = new VolumeSliderView(this);
+
+                volumeSliderView.setTag(type.audioStreamName);
+                titlesGroup.addView(volumeSliderView, indexOfTitle + i + 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                volumeSliderView.setVolumeName(getString(type.nameId));
+                volumeSliderView.setMaxVolume(control.getMaxLevel(type.audioStreamName));
+                volumeSliderView.setMinVolume(control.getMinLevel(type.audioStreamName));
+                volumeSliderView.setCurrentVolume(control.getLevel(type.audioStreamName));
+
+
+                final TypeListener volumeListener = new TypeListener(type.audioStreamName) {
+                    @Override
+                    public void onChangeIndex(int audioType, int currentLevel, int max) {
+                        if (currentLevel < control.getMinLevel(type)) {
+                            volumeSliderView.setCurrentVolume(control.getMinLevel(type));
+                        } else {
+                            volumeSliderView.setCurrentVolume(currentLevel);
+                        }
+                    }
+                };
+
+                volumeListeners.add(volumeListener);
+
+                volumeSliderView.setListener((volume, fromUser) -> {
+                    if (fromUser) {
+                        requireChangeVolume(type, volume);
+                    }
+                });
+            }
+            title.setTag(Boolean.TRUE);
+        }
+
+        for (AudioType audioExtenedType : AudioType.getAudioExtenedTypes()) {
+            titlesGroup.findViewWithTag(audioExtenedType.audioStreamName).setVisibility(isExtendedVolumesEnabled() ? View.VISIBLE: View.GONE);
+        }
     }
 
     private void buildUi() {
-        LinearLayout scrollView = findViewById(R.id.audio_types_holder);
-        scrollView.removeAllViews();
 
         Switch s = findViewById(R.id.dark_theme_switcher);
 
@@ -159,6 +217,8 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+        renderProfileItems();
+
         Switch s2 = findViewById(R.id.extended_volumes);
         s2.setChecked(isExtendedVolumesEnabled());
         s2.setOnCheckedChangeListener((buttonView, isChecked) -> setExtendedVolumesEnabled(isChecked));
@@ -167,38 +227,7 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.go_to_settings).setOnClickListener(v -> goToVolumeSettings());
 
         findViewById(R.id.new_profile).setOnClickListener(v -> startActivityForResult(new Intent(MainActivity.this, EditProfileActivity.class), REQUEST_CODE_NEW_PROFILE));
-        for (final AudioType type : AudioType.getAudioTypes(isExtendedVolumesEnabled())) {
 
-            final VolumeSliderView volumeSliderView = new VolumeSliderView(this);
-
-            volumeSliderView.setId(type.audioStreamName);
-            scrollView.addView(volumeSliderView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-            volumeSliderView.setVolumeName(getString(type.nameId));
-            volumeSliderView.setMaxVolume(control.getMaxLevel(type.audioStreamName));
-            volumeSliderView.setMinVolume(control.getMinLevel(type.audioStreamName));
-            volumeSliderView.setCurrentVolume(control.getLevel(type.audioStreamName));
-
-
-            final TypeListener volumeListener = new TypeListener(type.audioStreamName) {
-                @Override
-                public void onChangeIndex(int audioType, int currentLevel, int max) {
-                    if (currentLevel < control.getMinLevel(type)) {
-                        volumeSliderView.setCurrentVolume(control.getMinLevel(type));
-                    } else {
-                        volumeSliderView.setCurrentVolume(currentLevel);
-                    }
-                }
-            };
-
-            volumeListeners.add(volumeListener);
-
-            volumeSliderView.setListener((volume, fromUser) -> {
-                if (fromUser) {
-                    requireChangeVolume(type, volume);
-                }
-            });
-        }
 
 
         RingerModeSwitch ringerModeSwitch = findViewById(R.id.ringerMode);

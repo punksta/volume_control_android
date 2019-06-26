@@ -39,7 +39,6 @@ abstract public class BaseActivity extends Activity {
     protected void setExtendedVolumesEnabled(boolean isEnabled) {
         this.settings.isExtendedVoluleSettingsEnabled = isEnabled;
         settingsStorage.save(this.settings);
-        this.recreate();
     }
 
     protected boolean isExtendedVolumesEnabled() {

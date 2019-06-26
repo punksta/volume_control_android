@@ -23,6 +23,15 @@ public class AudioType {
         return Arrays.asList(MEDIA, RING);
     }
 
+    public static  List<AudioType> getAudioExtenedTypes() {
+        List<AudioType> result = new ArrayList<>();
+
+        result.add(NOTIFICATION);
+        result.add(SYSTEM_SOUNDS);
+        result.add(DTMF);
+        return result;
+    }
+
     public static List<AudioType> getAudioTypes(boolean externedEnabled) {
         List<AudioType> result = new ArrayList<>();
 
@@ -33,9 +42,7 @@ public class AudioType {
         result.add(VOICE_CALL);
         result.add(RING);
         if (externedEnabled) {
-            result.add(NOTIFICATION);
-            result.add(SYSTEM_SOUNDS);
-            result.add(DTMF);
+            result.addAll(getAudioExtenedTypes());
         }
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             result.add(new AudioType(R.string.volumeType_accessibility, AudioManager.STREAM_ACCESSIBILITY));
