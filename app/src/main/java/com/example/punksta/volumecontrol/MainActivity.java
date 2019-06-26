@@ -3,17 +3,11 @@ package com.example.punksta.volumecontrol;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -289,18 +283,6 @@ public class MainActivity extends BaseActivity {
         ringerModeSwitch.setRingMode(mode);
     };
 
-    static int vibrateSettingToValue(int position) {
-        switch (position) {
-            case 1:
-                return AudioManager.VIBRATE_SETTING_OFF;
-            case 2:
-                return AudioManager.VIBRATE_SETTING_ONLY_SILENT;
-            default:
-            case 0:
-                return AudioManager.VIBRATE_SETTING_ON;
-        }
-    }
-
     private void applyProfile(SoundProfile profile) {
         Intent i = SoundService.getIntentForProfile(this, profile);
         startService(i);
@@ -336,19 +318,6 @@ public class MainActivity extends BaseActivity {
 
     }
 
-
-    static int vibrateSettingToPosition(int setting) {
-        switch (setting) {
-            case AudioManager.VIBRATE_SETTING_OFF:
-                return 1;
-            case AudioManager.VIBRATE_SETTING_ONLY_SILENT:
-                return 2;
-            default:
-            case AudioManager.VIBRATE_SETTING_ON:
-                return 0;
-        }
-    }
-
     private void requireChangeVolume(AudioType audioType, int volume) {
         try {
             control.setVolumeLevel(audioType.audioStreamName, volume);
@@ -357,7 +326,6 @@ public class MainActivity extends BaseActivity {
             throwable.printStackTrace();
         }
     }
-
 
     @Override
     protected void onStart() {
@@ -388,22 +356,6 @@ public class MainActivity extends BaseActivity {
         TypeListener(int type) {
             this.type = type;
         }
-    }
-
-
-    private void onFullVolumeModeRequested() {
-        for (AudioType a : AudioType.getAudioTypes(isExtendedVolumesEnabled())) {
-            requireChangeVolume(a, control.getMaxLevel(a.audioStreamName));
-        }
-        // control.requestRindgerMode(AudioManager.RINGER_MODE_NORMAL);
-    }
-
-    private void onVibrateModeRequested() {
-        for (AudioType a : AudioType.getAudioTypes(isExtendedVolumesEnabled())) {
-            requireChangeVolume(a, control.getMinLevel(a.audioStreamName));
-        }
-        // control.requestRindgerMode(AudioManager.RINGER_MODE_VIBRATE);
-
     }
 
     @Override
