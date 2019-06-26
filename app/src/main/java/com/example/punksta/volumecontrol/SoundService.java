@@ -24,9 +24,9 @@ import com.punksta.apps.libs.VolumeControl;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 
 public class SoundService extends Service {
@@ -38,7 +38,7 @@ public class SoundService extends Service {
         }
     };
 
-    private Integer[] profilesToShow = null;
+    private List<Integer> profilesToShow = null;
     private boolean showProfiles = false;
 
     @Override
@@ -102,7 +102,7 @@ public class SoundService extends Service {
             soundProfileStorage.addListener(listener);
             createStaticNotificationChannel();
             showProfiles = intent.getBooleanExtra(EXTRA_SHOW_PROFILES, true);
-            profilesToShow = (Integer[]) intent.getSerializableExtra(EXTRA_VOLUME_TYPES_IDS);
+            profilesToShow = (List<Integer>) intent.getSerializableExtra(EXTRA_VOLUME_TYPES_IDS);
 
             try {
                 startForeground(
@@ -219,7 +219,7 @@ public class SoundService extends Service {
             Context context,
             SoundProfile[] profiles,
             VolumeControl control,
-            Integer[] volumeTypesToShow
+            List<Integer> volumeTypesToShow
     ) {
         Notification.Builder builder = new Notification.Builder(context);
 
@@ -244,10 +244,8 @@ public class SoundService extends Service {
         if (volumeTypesToShow != null) {
             remoteViews.removeAllViews(R.id.volume_sliders);
 
-            Set<Integer> volumes = new HashSet<>(Arrays.asList(volumeTypesToShow));
-
             for (AudioType notificationType : AudioType.getAudioTypes(true)) {
-                if (volumes.contains(notificationType.audioStreamName)) {
+                if (volumeTypesToShow.contains(notificationType.audioStreamName)) {
                     remoteViews.addView(R.id.volume_sliders, buildVolumeSlider(context, control, notificationType.audioStreamName, context.getString(notificationType.nameId)));
                 }
             }
@@ -266,7 +264,7 @@ public class SoundService extends Service {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder.setChannelId(staticNotificationId);
-            if ((volumeTypesToShow != null && volumeTypesToShow.length > 0) || (profiles != null && profiles.length > 0)) {
+            if ((volumeTypesToShow != null && volumeTypesToShow.size() > 0) || (profiles != null && profiles.length > 0)) {
                 builder.setContentText(context.getString(R.string.notification_widget_featured))
                     .setCustomBigContentView(remoteViews);
             }
@@ -316,7 +314,7 @@ public class SoundService extends Service {
         Intent result = new Intent(context, SoundService.class);
         result.setAction(FOREGROUND_ACTION);
         result.putExtra(EXTRA_SHOW_PROFILES, settings.showProfilesInNotification);
-        result.putExtra(EXTRA_VOLUME_TYPES_IDS, settings.volumeTypesToShow);
+        result.putExtra(EXTRA_VOLUME_TYPES_IDS, new ArrayList<>(Arrays.asList(settings.volumeTypesToShow)));
         return result;
     }
 }
