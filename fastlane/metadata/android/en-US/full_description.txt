@@ -1,4 +1,4 @@
-Minimal volume control application without unnecessary features.
+Simple volume control application. without unnecessary features.
 
 features:
    * manage volume of your device: call, ring, notifications, media
