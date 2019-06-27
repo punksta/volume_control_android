@@ -1,9 +1,8 @@
-Volume control application without unnecessary features.
+Minimal volume control application without unnecessary features.
 
-Features:
- * manage volume of your device: call, ring, notifications, media
- * create custom volume profiles
- * manage volume from notification bar (optionally)
- * use light or dark theme
-
-The app has super tiny apk size
+features:
+   * manage volume of your device: call, ring, notifications, media
+   * create custom volume profiles
+   * manage volume from notification bar (optionally)
+   * super tiny apk size
+   * Light and dark theme
