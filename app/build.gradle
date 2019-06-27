@@ -7,8 +7,8 @@ android {
         applicationId "com.punksta.apps.volumecontrol"
         minSdkVersion 15
         targetSdkVersion 29
-        versionCode 12
-        versionName "2.2.0"
+        versionCode 14
+        versionName "2.2.2"
     }
     buildTypes {
         release {
