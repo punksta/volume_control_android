@@ -11,9 +11,6 @@ public class Settings {
 
     public static final Integer[] defaultVolumeTypesToShow = {AudioManager.STREAM_RING, AudioManager.STREAM_MUSIC};
 
-    public Settings() {
-    }
-
     public Settings(boolean isDarkThemeEnabled,
                     boolean isExtendedVoluleSettingsEnabled,
                     boolean isNotificaitonWidgetEnabled,
