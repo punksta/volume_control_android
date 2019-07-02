@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.example.punksta.volumecontrol.EditProfileActivity.REQUEST_CODE_EDIT_PROFILE;
 import static com.example.punksta.volumecontrol.EditProfileActivity.REQUEST_CODE_NEW_PROFILE;
 import static com.example.punksta.volumecontrol.util.DNDModeChecker.isDNDPermisionGranded;
 import static com.example.punksta.volumecontrol.util.DNDModeChecker.showDNDPermissionAlert;
@@ -320,6 +321,11 @@ public class MainActivity extends BaseActivity {
     private void renderProfile(final SoundProfile profile) {
         final LinearLayout profiles = findViewById(R.id.profile_list);
         final VolumeProfileView view = new VolumeProfileView(this);
+        String tag = "profile_" + profile.id;
+        profiles.removeView(profiles.findViewWithTag(tag));
+        view.setTag(tag);
+
+
         view.setProfileTitle(profile.name);
         view.setOnActivateClickListener(() -> applyProfile(profile));
         view.setOnEditClickListener(() -> {
@@ -329,6 +335,7 @@ public class MainActivity extends BaseActivity {
             }
             profiles.removeView(view);
         });
+        view.setOnClickListener(view1 -> startActivityForResult(EditProfileActivity.getIntentForEdit(this, profile), REQUEST_CODE_EDIT_PROFILE));
         profiles.addView(view,
                 new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
@@ -400,11 +407,22 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
+            case EditProfileActivity.REQUEST_CODE_EDIT_PROFILE:
             case EditProfileActivity.REQUEST_CODE_NEW_PROFILE: {
                 if (resultCode == Activity.RESULT_OK) {
                     HashMap<Integer, Integer> volumes = (HashMap<Integer, Integer>) data.getSerializableExtra("volumes");
                     String name = data.getStringExtra("name");
-                    SoundProfile profile = profileStorage.addProfile(name, volumes);
+                    SoundProfile profile;
+                    if (requestCode ==  EditProfileActivity.REQUEST_CODE_NEW_PROFILE) {
+                        profile = profileStorage.addProfile(name, volumes);
+                    } else {
+                        int id = data.getIntExtra("id", -1);
+                        profile = new SoundProfile();
+                        profile.id = id;
+                        profile.name = name;
+                        profile.settings = volumes;
+                        profileStorage.saveProfile(profile);
+                    }
                     renderProfile(profile);
                 }
             }
