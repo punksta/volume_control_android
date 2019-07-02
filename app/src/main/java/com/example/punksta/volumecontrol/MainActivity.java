@@ -21,6 +21,7 @@ import com.example.punksta.volumecontrol.data.SoundProfile;
 import com.example.punksta.volumecontrol.util.DNDModeChecker;
 import com.example.punksta.volumecontrol.util.DynamicShortcutManager;
 import com.example.punksta.volumecontrol.model.SoundProfileStorage;
+import com.example.punksta.volumecontrol.util.IntentHelper;
 import com.example.punksta.volumecontrol.view.RingerModeSwitch;
 import com.example.punksta.volumecontrol.view.VolumeProfileView;
 import com.example.punksta.volumecontrol.view.VolumeSliderView;
@@ -96,13 +97,7 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    private void goToVolumeSettings() {
-        startActivity(new Intent(android.provider.Settings.ACTION_SOUND_SETTINGS));
-    }
 
-    private void goToMarket() {
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
-    }
 
 
     private void renderVolumeTypesInNotificationWidget() {
@@ -212,7 +207,7 @@ public class MainActivity extends BaseActivity {
 
         findViewById(R.id.rate_app).setOnClickListener(v -> {
             try {
-                goToMarket();
+                IntentHelper.goToMarket(this);
             } catch (Throwable e) {
                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -225,7 +220,7 @@ public class MainActivity extends BaseActivity {
         s2.setOnCheckedChangeListener((buttonView, isChecked) -> setExtendedVolumesEnabled(isChecked));
 
 
-        findViewById(R.id.go_to_settings).setOnClickListener(v -> goToVolumeSettings());
+        findViewById(R.id.go_to_settings).setOnClickListener(v -> IntentHelper.goToVolumeSettings(this));
 
         findViewById(R.id.new_profile).setOnClickListener(v -> startActivityForResult(new Intent(MainActivity.this, EditProfileActivity.class), REQUEST_CODE_NEW_PROFILE));
 
@@ -425,6 +420,7 @@ public class MainActivity extends BaseActivity {
                     }
                     renderProfile(profile);
                 }
+                break;
             }
             default:
                 super.onActivityResult(requestCode, resultCode, data);
