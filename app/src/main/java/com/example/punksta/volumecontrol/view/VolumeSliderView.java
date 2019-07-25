@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -13,36 +12,13 @@ import android.widget.TextView;
 
 import com.example.punksta.volumecontrol.R;
 
-public class VolumeSliderView  extends FrameLayout {
+public class VolumeSliderView extends FrameLayout {
 
     private TextView mTitle;
     private TextView mCurrentValue;
     private SeekBar seekBar;
 
     private VolumeSliderChangeListener volumeListener;
-
-    public VolumeSliderView(Context context) {
-        super(context);
-        init();
-    }
-
-    public VolumeSliderView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public VolumeSliderView( Context context,  AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public VolumeSliderView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
-
     private SeekBar.OnSeekBarChangeListener listener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -61,6 +37,28 @@ public class VolumeSliderView  extends FrameLayout {
 
         }
     };
+
+    public VolumeSliderView(Context context) {
+        super(context);
+        init();
+    }
+
+    public VolumeSliderView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public VolumeSliderView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public VolumeSliderView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init();
+    }
 
     private void init() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.audio_type_view, this, false);

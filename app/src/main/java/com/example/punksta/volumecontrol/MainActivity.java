@@ -5,22 +5,20 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.punksta.volumecontrol.data.SoundProfile;
+import com.example.punksta.volumecontrol.model.SoundProfileStorage;
 import com.example.punksta.volumecontrol.util.DNDModeChecker;
 import com.example.punksta.volumecontrol.util.DynamicShortcutManager;
-import com.example.punksta.volumecontrol.model.SoundProfileStorage;
 import com.example.punksta.volumecontrol.util.IntentHelper;
 import com.example.punksta.volumecontrol.view.RingerModeSwitch;
 import com.example.punksta.volumecontrol.view.VolumeProfileView;
@@ -41,10 +39,21 @@ import static com.example.punksta.volumecontrol.util.DNDModeChecker.showDNDPermi
 
 public class MainActivity extends BaseActivity {
 
+    public static final String PROFILE_ID = "PROFILE_ID";
     private List<TypeListener> volumeListeners = new ArrayList<>();
     private SoundProfileStorage profileStorage;
-
     private boolean goingGoFinish = false;
+    private VolumeControl.RingerModeChangelistener ringerModeSwitcher = (int mode) -> {
+        RingerModeSwitch ringerModeSwitch = findViewById(R.id.ringerMode);
+        ringerModeSwitch.setRingMode(mode);
+    };
+
+    public static Intent createOpenProfileIntent(Context context, SoundProfile profile) {
+        Intent intent1 = new Intent(context.getApplicationContext(), MainActivity.class);
+        intent1.setAction(Intent.ACTION_VIEW);
+        intent1.putExtra(PROFILE_ID, profile.id);
+        return intent1;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +75,6 @@ public class MainActivity extends BaseActivity {
             super.onNewIntent(intent);
         }
     }
-
 
     private boolean handleIntent(Intent intent) {
         if (intent.hasExtra(PROFILE_ID)) {
@@ -96,10 +104,6 @@ public class MainActivity extends BaseActivity {
         //super.onSaveInstanceState(outState, outPersistentState);
     }
 
-
-
-
-
     private void renderVolumeTypesInNotificationWidget() {
         List<AudioType> allThings = AudioType.getAudioTypes(true);
 
@@ -121,7 +125,7 @@ public class MainActivity extends BaseActivity {
             new AlertDialog.Builder(this,
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
                             android.R.style.Theme_Material_Dialog_Alert : android.R.style.Theme_Holo_Dialog
-                    )
+            )
                     .setMultiChoiceItems(titles, isCheckedArray, (dialogInterface, i, b) -> {
                         if (b) {
                             checked.add(allThings.get(i).audioStreamName);
@@ -194,7 +198,7 @@ public class MainActivity extends BaseActivity {
         }
 
         for (AudioType audioExtenedType : AudioType.getAudioExtenedTypes()) {
-            titlesGroup.findViewWithTag(audioExtenedType.audioStreamName).setVisibility(isExtendedVolumesEnabled() ? View.VISIBLE: View.GONE);
+            titlesGroup.findViewWithTag(audioExtenedType.audioStreamName).setVisibility(isExtendedVolumesEnabled() ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -225,7 +229,6 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.new_profile).setOnClickListener(v -> startActivityForResult(new Intent(MainActivity.this, EditProfileActivity.class), REQUEST_CODE_NEW_PROFILE));
 
 
-
         RingerModeSwitch ringerModeSwitch = findViewById(R.id.ringerMode);
         ringerModeSwitch.setRingMode(control.getRingerMode());
         ringerModeSwitch.setRingSwitcher(control::requestRindgerMode);
@@ -248,13 +251,13 @@ public class MainActivity extends BaseActivity {
 
         renderVolumeTypesInNotificationWidget();
 
-        profilesSwitch.setVisibility(isNotificationWidgetEnabled() ? View.VISIBLE: View.GONE);
-        volumeTypesToShow.setVisibility(isNotificationWidgetEnabled() ? View.VISIBLE: View.GONE);
+        profilesSwitch.setVisibility(isNotificationWidgetEnabled() ? View.VISIBLE : View.GONE);
+        volumeTypesToShow.setVisibility(isNotificationWidgetEnabled() ? View.VISIBLE : View.GONE);
 
         notificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             setNotificationWidgetEnabled(isChecked);
-            profilesSwitch.setVisibility(isChecked ? View.VISIBLE: View.GONE);
-            volumeTypesToShow.setVisibility(isChecked ? View.VISIBLE: View.GONE);
+            profilesSwitch.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            volumeTypesToShow.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             if (isChecked) {
                 startSoundService();
             } else {
@@ -302,11 +305,6 @@ public class MainActivity extends BaseActivity {
             startSoundService();
         }
     }
-
-    private VolumeControl.RingerModeChangelistener ringerModeSwitcher = (int mode) -> {
-        RingerModeSwitch ringerModeSwitch = findViewById(R.id.ringerMode);
-        ringerModeSwitch.setRingMode(mode);
-    };
 
     private void applyProfile(SoundProfile profile) {
         Intent i = SoundService.getIntentForProfile(this, profile);
@@ -368,7 +366,6 @@ public class MainActivity extends BaseActivity {
             control.registerVolumeListener(listener.type, listener, true);
     }
 
-
     @Override
     protected void recreateActivity() {
         Intent intent = new Intent(this, this.getClass());
@@ -391,14 +388,6 @@ public class MainActivity extends BaseActivity {
         volumeListeners.clear();
     }
 
-    static abstract class TypeListener implements VolumeControl.VolumeListener {
-        final int type;
-
-        TypeListener(int type) {
-            this.type = type;
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -408,7 +397,7 @@ public class MainActivity extends BaseActivity {
                     HashMap<Integer, Integer> volumes = (HashMap<Integer, Integer>) data.getSerializableExtra("volumes");
                     String name = data.getStringExtra("name");
                     SoundProfile profile;
-                    if (requestCode ==  EditProfileActivity.REQUEST_CODE_NEW_PROFILE) {
+                    if (requestCode == EditProfileActivity.REQUEST_CODE_NEW_PROFILE) {
                         profile = profileStorage.addProfile(name, volumes);
                     } else {
                         int id = data.getIntExtra("id", -1);
@@ -427,12 +416,11 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    public static final String PROFILE_ID = "PROFILE_ID";
+    static abstract class TypeListener implements VolumeControl.VolumeListener {
+        final int type;
 
-    public static Intent createOpenProfileIntent(Context context, SoundProfile profile) {
-        Intent intent1 = new Intent(context.getApplicationContext(), MainActivity.class);
-        intent1.setAction(Intent.ACTION_VIEW);
-        intent1.putExtra(PROFILE_ID, profile.id);
-        return intent1;
+        TypeListener(int type) {
+            this.type = type;
+        }
     }
 }

@@ -3,9 +3,8 @@
     android:id="@+id/notification_profile_title"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textSize="14sp"
     android:paddingTop="4sp"
     android:paddingBottom="4sp"
-   >
+    android:textSize="14sp">
 
 </Button>

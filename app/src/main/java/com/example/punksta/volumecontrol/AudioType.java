@@ -17,13 +17,25 @@ public class AudioType {
     private static AudioType NOTIFICATION = new AudioType(R.string.volumeType_notifications, AudioManager.STREAM_NOTIFICATION, AudioManager.VIBRATE_TYPE_NOTIFICATION);
     private static AudioType SYSTEM_SOUNDS = new AudioType(R.string.volumeType_systemSounds, AudioManager.STREAM_SYSTEM);
     private static AudioType DTMF = new AudioType(R.string.volumeType_dtmf, AudioManager.STREAM_DTMF);
+    public final int nameId;
+    public final int audioStreamName;
+    public final Integer vibrateSettings;
 
+    AudioType(int nameId, int audioStreamName) {
+        this(nameId, audioStreamName, null);
+    }
+
+    AudioType(int nameId, int audioStreamName, Integer vibrateSettings) {
+        this.nameId = nameId;
+        this.audioStreamName = audioStreamName;
+        this.vibrateSettings = vibrateSettings;
+    }
 
     public static List<AudioType> getNotificationTypes() {
         return Arrays.asList(MEDIA, RING);
     }
 
-    public static  List<AudioType> getAudioExtenedTypes() {
+    public static List<AudioType> getAudioExtenedTypes() {
         List<AudioType> result = new ArrayList<>();
 
         result.add(NOTIFICATION);
@@ -48,19 +60,5 @@ public class AudioType {
             result.add(new AudioType(R.string.volumeType_accessibility, AudioManager.STREAM_ACCESSIBILITY));
         }
         return result;
-    }
-
-    public final int nameId;
-    public final int audioStreamName;
-    public final Integer vibrateSettings;
-
-    AudioType(int nameId, int audioStreamName) {
-        this(nameId, audioStreamName, null);
-    }
-
-    AudioType(int nameId, int audioStreamName, Integer vibrateSettings) {
-        this.nameId = nameId;
-        this.audioStreamName = audioStreamName;
-        this.vibrateSettings = vibrateSettings;
     }
 }

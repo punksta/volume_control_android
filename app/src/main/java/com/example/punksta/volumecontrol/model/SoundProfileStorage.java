@@ -17,16 +17,22 @@ import java.util.Map;
 import java.util.Set;
 
 public class SoundProfileStorage {
-    public static interface Listener {
-        void onStorageChanged();
-    }
-
-    private Set<Listener> listeners = new HashSet<>();
-
+    private static SoundProfileStorage instance;
     private final SharedPreferences preferences;
+    private Set<Listener> listeners = new HashSet<>();
+    private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = (sharedPreferences, key) -> {
+        if (key.equals("ids")) {
+            for (Listener listener : listeners) {
+                listener.onStorageChanged();
+            }
+        }
+    };
     private List<Integer> ids;
 
-    private static SoundProfileStorage instance;
+    private SoundProfileStorage(SharedPreferences preferences) {
+        this.preferences = preferences;
+        preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+    }
 
     public static SoundProfileStorage getInstance(Context context) {
         if (instance == null) {
@@ -35,19 +41,38 @@ public class SoundProfileStorage {
         return instance;
     }
 
-    private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = (sharedPreferences, key) -> {
-        if (key.equals("ids")) {
-            for (Listener listener : listeners) {
-                listener.onStorageChanged();
-            }
+    private static String serialize(SoundProfile profile) throws JSONException {
+        JSONObject object = new JSONObject();
+        object.put("name", profile.name);
+        object.put("id", profile.id);
+        JSONObject settings = new JSONObject();
+        for (Map.Entry<Integer, Integer> integerIntegerEntry : profile.settings.entrySet()) {
+            settings.put(integerIntegerEntry.getKey().toString(), integerIntegerEntry.getValue());
         }
-    };
-
-    private SoundProfileStorage(SharedPreferences preferences) {
-        this.preferences = preferences;
-        preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        object.put("settings", settings);
+        return object.toString();
     }
 
+    private static SoundProfile deserialize(String string) throws JSONException {
+        SoundProfile result = new SoundProfile();
+
+        JSONObject object = new JSONObject(string);
+
+        result.name = object.getString("name");
+        result.id = object.getInt("id");
+
+        JSONObject settings = object.getJSONObject("settings");
+
+        for (int i = 0; i < settings.names().length(); i++) {
+            String key = settings.names().getString(i);
+            int value = settings.getInt(key);
+
+            Integer volumeName = Integer.parseInt(key);
+
+            result.settings.put(volumeName, value);
+        }
+        return result;
+    }
 
     public void addListener(Listener listener) {
         listeners.add(listener);
@@ -56,7 +81,6 @@ public class SoundProfileStorage {
     public void removeListener(Listener listener) {
         listeners.remove(listener);
     }
-
 
     private void loadIds() throws JSONException {
         if (ids == null) {
@@ -117,7 +141,6 @@ public class SoundProfileStorage {
         return result;
     }
 
-
     private String serializeIds(List<Integer> ids) {
         JSONArray r = new JSONArray();
         for (int id : ids) {
@@ -125,7 +148,6 @@ public class SoundProfileStorage {
         }
         return r.toString();
     }
-
 
     private List<Integer> deserializeIds(String str) throws JSONException {
         JSONArray r = new JSONArray(str);
@@ -136,37 +158,8 @@ public class SoundProfileStorage {
         return result;
     }
 
-    private static String serialize(SoundProfile profile) throws JSONException {
-        JSONObject object = new JSONObject();
-        object.put("name", profile.name);
-        object.put("id", profile.id);
-        JSONObject settings = new JSONObject();
-        for (Map.Entry<Integer, Integer> integerIntegerEntry : profile.settings.entrySet()) {
-            settings.put(integerIntegerEntry.getKey().toString(), integerIntegerEntry.getValue());
-        }
-        object.put("settings", settings);
-        return object.toString();
-    }
-
-    private static SoundProfile deserialize(String string) throws JSONException {
-        SoundProfile result = new SoundProfile();
-
-        JSONObject object = new JSONObject(string);
-
-        result.name = object.getString("name");
-        result.id = object.getInt("id");
-
-        JSONObject settings = object.getJSONObject("settings");
-
-        for (int i = 0; i < settings.names().length(); i++) {
-            String key = settings.names().getString(i);
-            int value = settings.getInt(key);
-
-            Integer volumeName = Integer.parseInt(key);
-
-            result.settings.put(volumeName, value);
-        }
-        return result;
+    public static interface Listener {
+        void onStorageChanged();
     }
 
 }

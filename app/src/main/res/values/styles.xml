@@ -24,13 +24,14 @@
         <item name="android:textAppearance">@android:style/TextAppearance.Holo.Medium</item>
     </style>
 
-    <style name="VolumeProfile_Title" >
+    <style name="VolumeProfile_Title">
         <item name="android:textAppearance">@android:style/TextAppearance.Holo.Medium</item>
     </style>
 
     <style name="Settings_button">
 
     </style>
+
     <style name="VolumeProfile_Button">
 
     </style>
