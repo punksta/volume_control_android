@@ -2,7 +2,8 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '29.0.0'
+    buildToolsVersion '29.0.1'
+
     defaultConfig {
         applicationId "com.punksta.apps.volumecontrol"
         minSdkVersion 15
@@ -10,6 +11,7 @@ android {
         versionCode 14
         versionName "2.2.2"
     }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -17,15 +19,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
+        encoding = 'UTF-8'
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    lintOptions {
+        disable 'GoogleAppIndexingWarning'
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    testImplementation 'junit:junit:4.12'
     api project(path: ':lib')
+    testImplementation 'junit:junit:4.12'
 }
