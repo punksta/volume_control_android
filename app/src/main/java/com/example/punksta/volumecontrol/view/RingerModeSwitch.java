@@ -45,16 +45,10 @@ public class RingerModeSwitch extends FrameLayout {
     }
 
     /**
-     *
      * @param mode 0-2
      */
     public void setRingMode(int mode) {
         ringSwitch.setProgress(mode);
-    }
-
-
-    public interface OnRingModeSliderChangeListener {
-        public void onChange(int mode);
     }
 
     public void setRingSwitcher(final OnRingModeSliderChangeListener changer) {
@@ -66,13 +60,15 @@ public class RingerModeSwitch extends FrameLayout {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
+    }
+
+    public interface OnRingModeSliderChangeListener {
+        void onChange(int mode);
     }
 }

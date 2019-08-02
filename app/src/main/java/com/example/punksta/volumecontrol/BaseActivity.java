@@ -11,8 +11,8 @@ import com.punksta.apps.libs.VolumeControl;
 
 abstract public class BaseActivity extends Activity {
     protected Settings settings;
-    private SettingsStorage settingsStorage;
     protected VolumeControl control;
+    private SettingsStorage settingsStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +40,13 @@ abstract public class BaseActivity extends Activity {
         this.recreate();
     }
 
-    protected void setExtendedVolumesEnabled(boolean isEnabled) {
-        this.settings.isExtendedVoluleSettingsEnabled = isEnabled;
-        settingsStorage.save(this.settings);
+    protected boolean isExtendedVolumesEnabled() {
+        return settings.isExtendedVolumeSettingsEnabled;
     }
 
-    protected boolean isExtendedVolumesEnabled() {
-        return settings.isExtendedVoluleSettingsEnabled;
+    protected void setExtendedVolumesEnabled(boolean isEnabled) {
+        this.settings.isExtendedVolumeSettingsEnabled = isEnabled;
+        settingsStorage.save(this.settings);
     }
 
     protected boolean isDarkTheme() {
@@ -54,11 +54,11 @@ abstract public class BaseActivity extends Activity {
     }
 
     public boolean isNotificationWidgetEnabled() {
-        return settings.isNotificaitonWidgetEnabled;
+        return settings.isNotificationWidgetEnabled;
     }
 
     public void setNotificationWidgetEnabled(boolean notificationWidgetEnabled) {
-        this.settings.isNotificaitonWidgetEnabled = notificationWidgetEnabled;
+        this.settings.isNotificationWidgetEnabled = notificationWidgetEnabled;
         settingsStorage.save(this.settings);
     }
 
@@ -68,7 +68,7 @@ abstract public class BaseActivity extends Activity {
     }
 
     public void setVolumeTypesToShowInWidget(Integer[] items) {
-        settings.volumeTypesToShow=items;
+        settings.volumeTypesToShow = items;
         settingsStorage.save(this.settings);
     }
 

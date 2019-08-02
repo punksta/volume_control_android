@@ -22,18 +22,12 @@ public class VolumeControl {
     private final Context context;
 
     private final Map<Integer, Set<VolumeListener>> listenerSet = new HashMap<>();
-    private final Set<RingerModeChangelistener> ringerModeListeners = new HashSet<>();
+    private final Set<RingerModeChangeListener> ringerModeListeners = new HashSet<>();
 
     private final IntentFilter intentFilter;
-    private AudioObserver audioObserver;
     private final Handler handler;
-
+    private AudioObserver audioObserver;
     private boolean ignoreUpdates = false;
-
-    public Context getContext() {
-        return context;
-    }
-
 
     public VolumeControl(Context context, Handler handler) {
         this.context = context;
@@ -47,6 +41,10 @@ public class VolumeControl {
         intentFilter.addAction("android.media.RINGER_MODE_CHANGED");
         intentFilter.addAction("android.media.EXTRA_VIBRATE_SETTING");
         intentFilter.addAction("android.media.EXTRA_VIBRATE_SETTING");
+    }
+
+    public Context getContext() {
+        return context;
     }
 
     public void unregisterAll() {
@@ -65,7 +63,7 @@ public class VolumeControl {
         mediaManager.setStreamVolume(type, index, 0);
     }
 
-    public void addOnRingerModeListener(RingerModeChangelistener l) {
+    public void addOnRingerModeListener(RingerModeChangeListener l) {
         ringerModeListeners.add(l);
     }
 
@@ -123,15 +121,7 @@ public class VolumeControl {
         }
     }
 
-    public interface VolumeListener {
-        void onChangeIndex(int autodioStream, int currentLevel, int max);
-    }
-
-    public interface RingerModeChangelistener {
-        void onChange(int mode);
-    }
-
-    public void requestRindgerMode(int ringerMode) {
+    public void requestRingerMode(int ringerMode) {
         mediaManager.setRingerMode(ringerMode);
     }
 
@@ -139,12 +129,22 @@ public class VolumeControl {
         return mediaManager.getRingerMode();
     }
 
-    private class AudioObserver extends BroadcastReceiver {
+    public interface VolumeListener {
+        void onChangeIndex(int autodioStream, int currentLevel, int max);
+    }
 
+    public interface RingerModeChangeListener {
+        void onChange(int mode);
+    }
+
+    private class AudioObserver extends BroadcastReceiver {
 
         //last levels for each AudioType
         private Map<Integer, Integer> lastVolumes = new HashMap<>();
-
+        private Runnable updateRunnable = () -> {
+            update();
+            ignoreUpdates = false;
+        };
 
         private void notifyListeners(Integer type, int newLevel) {
             int max = getMaxLevel(type);
@@ -153,24 +153,15 @@ public class VolumeControl {
             lastVolumes.put(type, newLevel);
         }
 
-
         private void update() {
             for (Map.Entry<Integer, Set<VolumeListener>> entry : listenerSet.entrySet()) {
-                Integer current = getLevel(entry.getKey());
+                int current = getLevel(entry.getKey());
                 notifyListeners(entry.getKey(), current);
             }
-            for (RingerModeChangelistener ringerModeListener : ringerModeListeners) {
+            for (RingerModeChangeListener ringerModeListener : ringerModeListeners) {
                 ringerModeListener.onChange(getRingerMode());
             }
         }
-
-        private Runnable updateRunnable = new Runnable() {
-            @Override
-            public void run() {
-                update();
-                ignoreUpdates = false;
-            }
-        };
 
         @Override
         public void onReceive(Context context, Intent intent) {

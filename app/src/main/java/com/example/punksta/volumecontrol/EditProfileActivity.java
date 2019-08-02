@@ -1,6 +1,5 @@
 package com.example.punksta.volumecontrol;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +18,33 @@ import com.example.punksta.volumecontrol.view.VolumeSliderView;
 import java.util.HashMap;
 
 public class EditProfileActivity extends BaseActivity {
+
+    public static final int REQUEST_CODE_EDIT_PROFILE = 0;
+    public static final int REQUEST_CODE_NEW_PROFILE = 1;
+    private HashMap<Integer, Integer> volumes = new HashMap<>();
+    private String name = "";
+    private TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            name = charSequence.toString().trim();
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+        }
+    };
+
+    public static Intent getIntentForEdit(Context context, SoundProfile profile) {
+        return new Intent(context, EditProfileActivity.class)
+                .putExtra("id", profile.id.intValue())
+                .putExtra("volumes", new HashMap<>(profile.settings))
+                .putExtra("name", profile.name)
+                .putExtra("code", REQUEST_CODE_EDIT_PROFILE);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +68,6 @@ public class EditProfileActivity extends BaseActivity {
         outState.putString("name", name);
         outState.putSerializable("name", volumes);
     }
-
-    private HashMap<Integer, Integer> volumes = new HashMap<>();
-    private String name = "";
 
     private void buildUi() {
         LinearLayout scrollView = findViewById(R.id.levels);
@@ -78,23 +101,6 @@ public class EditProfileActivity extends BaseActivity {
         }
     }
 
-    private TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            name = charSequence.toString().trim();
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-        }
-    };
-
-
     private void requiredSave() {
         Intent i = new Intent();
         i.putExtra("volumes", volumes);
@@ -105,16 +111,4 @@ public class EditProfileActivity extends BaseActivity {
         setResult(Activity.RESULT_OK, i);
         finish();
     }
-
-    public static Intent getIntentForEdit(Context context, SoundProfile profile) {
-        return new Intent(context, EditProfileActivity.class)
-                .putExtra("id", profile.id.intValue())
-                .putExtra("volumes", new HashMap<>(profile.settings))
-                .putExtra("name", profile.name)
-                .putExtra("code", REQUEST_CODE_EDIT_PROFILE);
-    }
-
-
-    public static final int REQUEST_CODE_EDIT_PROFILE = 0;
-    public static final int REQUEST_CODE_NEW_PROFILE = 1;
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notification_slider_item"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:background="@color/notification_slider_inactive_background">
+
+    <FrameLayout
+        android:id="@+id/deliver_item"
+        android:layout_width="1dp"
+        android:layout_height="8dp"
+        android:layout_gravity="end|bottom"
+        android:background="@color/notification_deliver_color" />
+
+</FrameLayout>

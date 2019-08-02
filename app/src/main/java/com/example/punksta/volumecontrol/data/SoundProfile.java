@@ -28,5 +28,3 @@ public class SoundProfile {
         return result;
     }
 }
-
-

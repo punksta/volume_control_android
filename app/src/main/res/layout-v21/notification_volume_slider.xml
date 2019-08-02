@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="1dp"
-    android:layout_marginTop="1dp"
     android:layout_below="@+id/app_icon"
+    android:layout_marginTop="1dp"
+    android:layout_marginBottom="1dp"
     android:gravity="center_vertical">
-
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,56 +13,55 @@
         android:orientation="horizontal">
 
         <TextView
-            android:elevation="5dp"
             android:id="@+id/volume_down"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:background="#ddd"
             android:clickable="true"
+            android:elevation="5dp"
+            android:focusable="true"
+            android:gravity="center"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:text="-"
             android:textColor="@android:color/black"
             android:textSize="25sp" />
 
-
         <LinearLayout
             android:id="@+id/volume_slider"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/notification_slider"
             android:orientation="horizontal" />
 
-
         <TextView
-            android:elevation="5dp"
             android:id="@+id/volume_up"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:background="#ddd"
+            android:elevation="5dp"
             android:gravity="center"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:text="+"
             android:textColor="@android:color/black"
             android:textSize="25sp" />
+
     </LinearLayout>
 
     <TextView
-        android:fontFamily="sans-serif-"
-        android:layout_gravity="center"
-        android:gravity="center"
         android:id="@+id/volume_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="sans-serif-"
+        android:gravity="center"
         android:minWidth="50dp"
         android:text="@string/volumeType_media"
-        android:textColor="@color/notification_volule_title_color"
         android:textAppearance="@android:style/TextAppearance.Material.Notification"
+        android:textColor="@color/notification_volume_title_color"
         android:textSize="17sp"
         android:textStyle="normal" />
-
 
 </FrameLayout>

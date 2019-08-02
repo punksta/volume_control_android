@@ -13,8 +13,11 @@ import android.widget.TextView;
 import com.example.punksta.volumecontrol.R;
 
 
-
 public class VolumeProfileView extends FrameLayout {
+    private TextView mTitle;
+    private View deleteButton;
+    private Button activeButton;
+
     public VolumeProfileView(Context context) {
         super(context);
         init();
@@ -36,10 +39,6 @@ public class VolumeProfileView extends FrameLayout {
         init();
     }
 
-    private TextView mTitle;
-    private View deleteButton;
-    private Button activeButton;
-
     private void init() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.profile_item, this, false);
         mTitle = view.findViewById(R.id.profile_name);
@@ -51,7 +50,6 @@ public class VolumeProfileView extends FrameLayout {
     public void setOnEditClickListener(Runnable r) {
         deleteButton.setOnClickListener(v -> r.run());
     }
-
 
 
     public void setOnActivateClickListener(Runnable r) {
