@@ -3,6 +3,7 @@ package com.example.punksta.volumecontrol.util;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.Settings;
 
 public class IntentHelper {
     public static void goToMarket(Activity activity) {
@@ -10,6 +11,6 @@ public class IntentHelper {
     }
 
     public static void goToVolumeSettings(Activity activity) {
-        activity.startActivity(new Intent(android.provider.Settings.ACTION_SOUND_SETTINGS));
+        activity.startActivity(new Intent(Settings.ACTION_SOUND_SETTINGS));
     }
 }

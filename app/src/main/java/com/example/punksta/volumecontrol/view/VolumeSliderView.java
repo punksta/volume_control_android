@@ -29,12 +29,10 @@ public class VolumeSliderView extends FrameLayout {
 
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
-
         }
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-
         }
     };
 
@@ -66,7 +64,7 @@ public class VolumeSliderView extends FrameLayout {
         mCurrentValue = view.findViewById(R.id.current_value);
         seekBar = view.findViewById(R.id.seek_bar);
         seekBar.setOnSeekBarChangeListener(listener);
-//        int padding = (int )convertDpToPixel(10, getContext());
+//        int padding = (int) convertDpToPixel(10, getContext());
 
 //        seekBar.setPadding(padding, 0, padding, 0);
         addView(view);

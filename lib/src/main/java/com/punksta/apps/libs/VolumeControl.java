@@ -22,7 +22,7 @@ public class VolumeControl {
     private final Context context;
 
     private final Map<Integer, Set<VolumeListener>> listenerSet = new HashMap<>();
-    private final Set<RingerModeChangelistener> ringerModeListeners = new HashSet<>();
+    private final Set<RingerModeChangeListener> ringerModeListeners = new HashSet<>();
 
     private final IntentFilter intentFilter;
     private final Handler handler;
@@ -63,7 +63,7 @@ public class VolumeControl {
         mediaManager.setStreamVolume(type, index, 0);
     }
 
-    public void addOnRingerModeListener(RingerModeChangelistener l) {
+    public void addOnRingerModeListener(RingerModeChangeListener l) {
         ringerModeListeners.add(l);
     }
 
@@ -121,7 +121,7 @@ public class VolumeControl {
         }
     }
 
-    public void requestRindgerMode(int ringerMode) {
+    public void requestRingerMode(int ringerMode) {
         mediaManager.setRingerMode(ringerMode);
     }
 
@@ -133,21 +133,17 @@ public class VolumeControl {
         void onChangeIndex(int autodioStream, int currentLevel, int max);
     }
 
-    public interface RingerModeChangelistener {
+    public interface RingerModeChangeListener {
         void onChange(int mode);
     }
 
     private class AudioObserver extends BroadcastReceiver {
 
-
         //last levels for each AudioType
         private Map<Integer, Integer> lastVolumes = new HashMap<>();
-        private Runnable updateRunnable = new Runnable() {
-            @Override
-            public void run() {
-                update();
-                ignoreUpdates = false;
-            }
+        private Runnable updateRunnable = () -> {
+            update();
+            ignoreUpdates = false;
         };
 
         private void notifyListeners(Integer type, int newLevel) {
@@ -159,10 +155,10 @@ public class VolumeControl {
 
         private void update() {
             for (Map.Entry<Integer, Set<VolumeListener>> entry : listenerSet.entrySet()) {
-                Integer current = getLevel(entry.getKey());
+                int current = getLevel(entry.getKey());
                 notifyListeners(entry.getKey(), current);
             }
-            for (RingerModeChangelistener ringerModeListener : ringerModeListeners) {
+            for (RingerModeChangeListener ringerModeListener : ringerModeListeners) {
                 ringerModeListener.onChange(getRingerMode());
             }
         }

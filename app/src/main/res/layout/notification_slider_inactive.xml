@@ -12,4 +12,5 @@
         android:layout_height="8dp"
         android:layout_gravity="end|bottom"
         android:background="@color/notification_deliver_color" />
+
 </FrameLayout>

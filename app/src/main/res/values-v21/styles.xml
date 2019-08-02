@@ -9,7 +9,7 @@
         <item name="themeColorAccent">@color/colorAccent_light</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
-        <!--<item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>-->
+        <!--item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item-->
     </style>
 
     <style name="AppTheme.Dark" parent="android:ThemeOverlay.Material.Dark">
@@ -21,7 +21,7 @@
         <item name="themeColorAccent">@color/colorAccent_dark</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
-        <!--<item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>-->
+        <!--item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item-->
     </style>
 
     <style name="ScreenHeader">
@@ -37,7 +37,6 @@
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
 
-
     <style name="VolumeLevel_Title">
         <item name="android:textAppearance">@android:style/TextAppearance.Material.Medium</item>
     </style>
@@ -47,16 +46,12 @@
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
-    <style name="VolumeProfile_Button" parent="android:Widget.Material.Button.Small">
+    <style name="VolumeProfile_Button" parent="android:Widget.Material.Button.Small" />
 
-    </style>
-
-    <style name="Settings_button" parent="android:Widget.Material.Button.Borderless.Colored">
-
-    </style>
-
+    <style name="Settings_button" parent="android:Widget.Material.Button.Borderless.Colored" />
 
     <style name="Profile_Add_Button" parent="android:Widget.Material.Button.Borderless.Colored">
         <item name="android:minWidth">0dp</item>
     </style>
+
 </resources>

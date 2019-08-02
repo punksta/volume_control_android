@@ -1,6 +1,5 @@
 package com.example.punksta.volumecontrol;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +26,6 @@ public class EditProfileActivity extends BaseActivity {
     private TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
         }
 
         @Override

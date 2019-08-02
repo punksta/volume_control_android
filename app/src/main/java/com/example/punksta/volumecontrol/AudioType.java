@@ -1,6 +1,7 @@
 package com.example.punksta.volumecontrol;
 
 import android.media.AudioManager;
+import android.os.Build;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +36,7 @@ public class AudioType {
         return Arrays.asList(MEDIA, RING);
     }
 
-    public static List<AudioType> getAudioExtenedTypes() {
+    public static List<AudioType> getAudioExtendedTypes() {
         List<AudioType> result = new ArrayList<>();
 
         result.add(NOTIFICATION);
@@ -44,19 +45,18 @@ public class AudioType {
         return result;
     }
 
-    public static List<AudioType> getAudioTypes(boolean externedEnabled) {
+    public static List<AudioType> getAudioTypes(boolean extendedEnabled) {
         List<AudioType> result = new ArrayList<>();
-
 
         result.add(ALARM);
         result.add(MEDIA);
-
         result.add(VOICE_CALL);
         result.add(RING);
-        if (externedEnabled) {
-            result.addAll(getAudioExtenedTypes());
+
+        if (extendedEnabled) {
+            result.addAll(getAudioExtendedTypes());
         }
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             result.add(new AudioType(R.string.volumeType_accessibility, AudioManager.STREAM_ACCESSIBILITY));
         }
         return result;

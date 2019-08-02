@@ -7,6 +7,7 @@ import android.content.pm.ShortcutManager;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 
+import com.example.punksta.volumecontrol.MainActivity;
 import com.example.punksta.volumecontrol.R;
 import com.example.punksta.volumecontrol.data.SoundProfile;
 
@@ -14,11 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.example.punksta.volumecontrol.MainActivity.createOpenProfileIntent;
-
 @TargetApi(Build.VERSION_CODES.O)
 public class DynamicShortcutManager {
-
 
     private static String profileToShortcutId(SoundProfile profile) {
         return "profile_" + profile.id.toString();
@@ -26,7 +24,7 @@ public class DynamicShortcutManager {
 
     private static ShortcutInfo createShortcutInfo(Activity activity, SoundProfile profile) {
         return new ShortcutInfo.Builder(activity.getApplicationContext(), profileToShortcutId(profile))
-                .setIntent(createOpenProfileIntent(activity, profile))
+                .setIntent(MainActivity.createOpenProfileIntent(activity, profile))
                 .setShortLabel(profile.name)
                 .setLongLabel(profile.name)
                 .setDisabledMessage("Login to open this")

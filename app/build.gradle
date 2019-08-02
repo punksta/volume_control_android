@@ -32,7 +32,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
     api project(path: ':lib')
+    implementation 'androidx.annotation:annotation:1.0.0'
+
     testImplementation 'junit:junit:4.12'
 }

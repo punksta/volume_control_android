@@ -20,17 +20,17 @@ public class SoundProfileStorage {
     private static SoundProfileStorage instance;
     private final SharedPreferences preferences;
     private Set<Listener> listeners = new HashSet<>();
-    private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = (sharedPreferences, key) -> {
-        if (key.equals("ids")) {
-            for (Listener listener : listeners) {
-                listener.onStorageChanged();
-            }
-        }
-    };
     private List<Integer> ids;
 
     private SoundProfileStorage(SharedPreferences preferences) {
         this.preferences = preferences;
+        SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = (sharedPreferences, key) -> {
+            if (key.equals("ids")) {
+                for (Listener listener : listeners) {
+                    listener.onStorageChanged();
+                }
+            }
+        };
         preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 
@@ -104,7 +104,7 @@ public class SoundProfileStorage {
     }
 
     public void removeProfile(int id) {
-        ids.remove(ids.indexOf(Integer.valueOf(id)));
+        ids.remove(Integer.valueOf(id));
         preferences.edit()
                 .remove("" + id)
                 .putString("ids", serializeIds(ids))
@@ -158,7 +158,7 @@ public class SoundProfileStorage {
         return result;
     }
 
-    public static interface Listener {
+    public interface Listener {
         void onStorageChanged();
     }
 

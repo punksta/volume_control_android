@@ -34,9 +34,9 @@ public class SettingsStorage {
 
     public void save(Settings settings) {
         preferences.edit()
-                .putBoolean(KEY_NOTIFICATION_WIDGET, settings.isNotificaitonWidgetEnabled)
+                .putBoolean(KEY_NOTIFICATION_WIDGET, settings.isNotificationWidgetEnabled)
                 .putBoolean(KEY_DARK_THEME, settings.isDarkThemeEnabled)
-                .putBoolean(KEY_EXTENDED_VOLUME_SETTINGS, settings.isExtendedVoluleSettingsEnabled)
+                .putBoolean(KEY_EXTENDED_VOLUME_SETTINGS, settings.isExtendedVolumeSettingsEnabled)
                 .putBoolean(KEY_SHOW_PROFILE_IN_NOTIFICATION, settings.showProfilesInNotification)
                 .putString(KEY_VOLUME_TYPES_IDS, serializeIds(settings.volumeTypesToShow))
                 .apply();

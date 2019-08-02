@@ -60,17 +60,15 @@ public class RingerModeSwitch extends FrameLayout {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
     }
 
     public interface OnRingModeSliderChangeListener {
-        public void onChange(int mode);
+        void onChange(int mode);
     }
 }

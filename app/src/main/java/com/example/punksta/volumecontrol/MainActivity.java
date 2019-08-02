@@ -34,7 +34,7 @@ import java.util.List;
 
 import static com.example.punksta.volumecontrol.EditProfileActivity.REQUEST_CODE_EDIT_PROFILE;
 import static com.example.punksta.volumecontrol.EditProfileActivity.REQUEST_CODE_NEW_PROFILE;
-import static com.example.punksta.volumecontrol.util.DNDModeChecker.isDNDPermisionGranded;
+import static com.example.punksta.volumecontrol.util.DNDModeChecker.isDNDPermissionGranted;
 import static com.example.punksta.volumecontrol.util.DNDModeChecker.showDNDPermissionAlert;
 
 public class MainActivity extends BaseActivity {
@@ -43,7 +43,7 @@ public class MainActivity extends BaseActivity {
     private List<TypeListener> volumeListeners = new ArrayList<>();
     private SoundProfileStorage profileStorage;
     private boolean goingGoFinish = false;
-    private VolumeControl.RingerModeChangelistener ringerModeSwitcher = (int mode) -> {
+    private VolumeControl.RingerModeChangeListener ringerModeSwitcher = (int mode) -> {
         RingerModeSwitch ringerModeSwitch = findViewById(R.id.ringerMode);
         ringerModeSwitch.setRingMode(mode);
     };
@@ -121,7 +121,6 @@ public class MainActivity extends BaseActivity {
                 isCheckedArray[i] = checked.contains(allThings.get(i).audioStreamName);
             }
 
-
             new AlertDialog.Builder(this,
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
                             android.R.style.Theme_Material_Dialog_Alert : android.R.style.Theme_Holo_Dialog
@@ -138,7 +137,6 @@ public class MainActivity extends BaseActivity {
                         startSoundService();
                     })
                     .show();
-
         });
     }
 
@@ -197,8 +195,8 @@ public class MainActivity extends BaseActivity {
             title.setTag(Boolean.TRUE);
         }
 
-        for (AudioType audioExtenedType : AudioType.getAudioExtenedTypes()) {
-            titlesGroup.findViewWithTag(audioExtenedType.audioStreamName).setVisibility(isExtendedVolumesEnabled() ? View.VISIBLE : View.GONE);
+        for (AudioType audioExtendedType : AudioType.getAudioExtendedTypes()) {
+            titlesGroup.findViewWithTag(audioExtendedType.audioStreamName).setVisibility(isExtendedVolumesEnabled() ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -231,7 +229,7 @@ public class MainActivity extends BaseActivity {
 
         RingerModeSwitch ringerModeSwitch = findViewById(R.id.ringerMode);
         ringerModeSwitch.setRingMode(control.getRingerMode());
-        ringerModeSwitch.setRingSwitcher(control::requestRindgerMode);
+        ringerModeSwitch.setRingSwitcher(control::requestRingerMode);
         control.addOnRingerModeListener(ringerModeSwitcher);
         ringerModeSwitch.setVisibility(View.GONE);
 
@@ -301,7 +299,7 @@ public class MainActivity extends BaseActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (isNotificationWidgetEnabled() && isDNDPermisionGranded(this)) {
+        if (isNotificationWidgetEnabled() && isDNDPermissionGranted(this)) {
             startSoundService();
         }
     }
@@ -323,7 +321,7 @@ public class MainActivity extends BaseActivity {
         view.setOnActivateClickListener(() -> applyProfile(profile));
         view.setOnEditClickListener(() -> {
             profileStorage.removeProfile(profile.id);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 DynamicShortcutManager.removeShortcut(this, profile);
             }
             profiles.removeView(view);
@@ -359,7 +357,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (!DNDModeChecker.isDNDPermisionGranded(this)) {
+        if (!DNDModeChecker.isDNDPermissionGranted(this)) {
             showDNDPermissionAlert(this);
         }
         for (TypeListener listener : volumeListeners)

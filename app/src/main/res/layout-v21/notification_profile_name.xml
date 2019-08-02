@@ -5,6 +5,4 @@
     android:layout_height="wrap_content"
     android:paddingTop="4sp"
     android:paddingBottom="4sp"
-    android:textSize="14sp">
-
-</Button>
+    android:textSize="14sp" />

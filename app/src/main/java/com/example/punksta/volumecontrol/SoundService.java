@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class SoundService extends Service {
 
     private static final int staticNotificationNumber = 1;
@@ -51,7 +50,7 @@ public class SoundService extends Service {
     private VolumeControl control;
     private SoundProfileStorage soundProfileStorage;
     SoundProfileStorage.Listener listener = this::updateNotification;
-    private VolumeControl.VolumeListener voluleListener = new MainActivity.TypeListener(AudioManager.STREAM_MUSIC) {
+    private VolumeControl.VolumeListener volumeListener = new MainActivity.TypeListener(AudioManager.STREAM_MUSIC) {
         @Override
         public void onChangeIndex(int autodioStream, int currentLevel, int max) {
             updateNotification();
@@ -73,7 +72,7 @@ public class SoundService extends Service {
             boolean isActive = volumeLevel < control.getLevel(typeId);
             RemoteViews sliderItemView = new RemoteViews(
                     context.getPackageName(),
-                    isActive ? R.layout.notificatiion_slider_active : R.layout.notificatiion_slider_inactive
+                    isActive ? R.layout.notification_slider_active : R.layout.notification_slider_inactive
             );
 
             if (i + 1 == maxSliderLevel) {
@@ -241,7 +240,6 @@ public class SoundService extends Service {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        ;
     }
 
     @Override
@@ -249,7 +247,7 @@ public class SoundService extends Service {
 
         String action = intent != null ? intent.getAction() : null;
 
-        if (!DNDModeChecker.isDNDPermisionGranded(this) && !STOP_ACTION.equals(action)) {
+        if (!DNDModeChecker.isDNDPermissionGranted(this) && !STOP_ACTION.equals(action)) {
             Toast.makeText(this, getString(R.string.dnd_permission_title), Toast.LENGTH_LONG).show();
             return super.onStartCommand(intent, flags, startId);
         }
@@ -293,7 +291,7 @@ public class SoundService extends Service {
             }
 
             for (Integer id : profilesToShow) {
-                control.registerVolumeListener(id, voluleListener, false);
+                control.registerVolumeListener(id, volumeListener, false);
             }
             return START_NOT_STICKY;
         } else {
