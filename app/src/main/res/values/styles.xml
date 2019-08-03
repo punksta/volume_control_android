@@ -33,4 +33,6 @@
 
     <style name="Profile_Add_Button" />
 
+    <style name="CrashReportTheme" parent="android:Theme.Holo.Dialog"/>
+
 </resources>

@@ -31,9 +31,13 @@ android {
     }
 }
 
+def acraVersion = '5.4.0'
+
 dependencies {
     api project(path: ':lib')
     implementation 'androidx.annotation:annotation:1.0.0'
+    implementation "ch.acra:acra-mail:$acraVersion"
+    implementation "ch.acra:acra-dialog:$acraVersion"
 
     testImplementation 'junit:junit:4.12'
 }

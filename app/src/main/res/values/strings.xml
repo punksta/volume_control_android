@@ -45,4 +45,7 @@
         <item>Only in silent mode</item>
     </string-array>
 
+    <string name="acra_dialog_title">Send crash report</string>
+    <string name="acra_dialog_message">Sorry, the application crashed. Send crash report to the developer by email?</string>
+
 </resources>

@@ -54,4 +54,6 @@
         <item name="android:minWidth">0dp</item>
     </style>
 
+    <style name="CrashReportTheme" parent="android:Theme.Material.Dialog.Alert"/>
+
 </resources>
