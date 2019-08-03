@@ -6,13 +6,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 
 import com.example.punksta.volumecontrol.data.SoundProfile;
+import com.example.punksta.volumecontrol.util.KeyboardUtils;
 import com.example.punksta.volumecontrol.view.VolumeSliderView;
 
 import java.util.HashMap;
@@ -46,20 +49,36 @@ public class EditProfileActivity extends BaseActivity {
                 .putExtra("code", REQUEST_CODE_EDIT_PROFILE);
     }
 
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
-        if (savedInstanceState == null && getIntent() != null &&
-                getIntent().getIntExtra("code", -1) == REQUEST_CODE_EDIT_PROFILE) {
-            volumes = (HashMap<Integer, Integer>) getIntent().getSerializableExtra("volumes");
-            name = getIntent().getStringExtra("name");
-        }
+
         if (savedInstanceState != null) {
             volumes = (HashMap<Integer, Integer>) savedInstanceState.getSerializable("volumes");
             name = savedInstanceState.getString("name");
+        } else {
+            if (getIntent() != null &&
+                    getIntent().getIntExtra("code", -1) == REQUEST_CODE_EDIT_PROFILE) {
+                volumes = (HashMap<Integer, Integer>) getIntent().getSerializableExtra("volumes");
+                name = getIntent().getStringExtra("name");
+            } else {
+                KeyboardUtils.showKeyboard(findViewById(R.id.profile_name), this);
+            }
         }
+
         buildUi();
+
     }
 
     @Override
