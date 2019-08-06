@@ -98,8 +98,9 @@ public class EditProfileActivity extends BaseActivity {
             volumeSliderView.setMaxVolume(control.getMaxLevel(type.audioStreamName));
             volumeSliderView.setMinVolume(control.getMinLevel(type.audioStreamName));
             if (!volumes.containsKey(type.audioStreamName)) {
-                volumeSliderView.setCurrentVolume(control.getLevel(type.audioStreamName), false);
-                volumes.put(type.audioStreamName, control.getMaxLevel(type.audioStreamName));
+                int currentVolume = control.getLevel(type.audioStreamName);
+                volumeSliderView.setCurrentVolume(currentVolume, false);
+                volumes.put(type.audioStreamName, currentVolume);
             } else {
                 volumeSliderView.setCurrentVolume(volumes.get(type.audioStreamName), false);
             }
