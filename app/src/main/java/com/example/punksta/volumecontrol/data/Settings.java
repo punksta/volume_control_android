@@ -3,10 +3,10 @@ package com.example.punksta.volumecontrol.data;
 import android.media.AudioManager;
 
 public class Settings {
-    public static final Integer[] defaultVolumeTypesToShow = {AudioManager.STREAM_RING, AudioManager.STREAM_MUSIC};
-    public boolean isDarkThemeEnabled = false;
+    private static final Integer[] defaultVolumeTypesToShow = {AudioManager.STREAM_MUSIC, AudioManager.STREAM_RING, AudioManager.STREAM_NOTIFICATION};
+    public boolean isDarkThemeEnabled = true;
     public boolean isExtendedVolumeSettingsEnabled = false;
-    public boolean isNotificationWidgetEnabled = false;
+    public boolean isNotificationWidgetEnabled = true;
     public boolean showProfilesInNotification = true;
     public Integer[] volumeTypesToShow = defaultVolumeTypesToShow;
 
@@ -22,4 +22,6 @@ public class Settings {
         this.showProfilesInNotification = showProfilesInNotification;
         this.volumeTypesToShow = volumeTypesToShow;
     }
+
+    public Settings() {}
 }

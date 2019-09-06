@@ -42,13 +42,15 @@ public class SettingsStorage {
                 .apply();
     }
 
+    private static Settings defaultSettings = new Settings();
+
     public Settings settings() {
         return new Settings(
-                preferences.getBoolean(KEY_DARK_THEME, false),
-                preferences.getBoolean(KEY_EXTENDED_VOLUME_SETTINGS, false),
-                preferences.getBoolean(KEY_NOTIFICATION_WIDGET, false),
-                preferences.getBoolean(KEY_SHOW_PROFILE_IN_NOTIFICATION, true),
-                deserializeIds(preferences.getString(KEY_VOLUME_TYPES_IDS, ""))
+                preferences.getBoolean(KEY_DARK_THEME, defaultSettings.isDarkThemeEnabled),
+                preferences.getBoolean(KEY_EXTENDED_VOLUME_SETTINGS, defaultSettings.isExtendedVolumeSettingsEnabled),
+                preferences.getBoolean(KEY_NOTIFICATION_WIDGET, defaultSettings.isNotificationWidgetEnabled),
+                preferences.getBoolean(KEY_SHOW_PROFILE_IN_NOTIFICATION, defaultSettings.showProfilesInNotification),
+                deserializeIds(preferences.getString(KEY_VOLUME_TYPES_IDS, serializeIds(defaultSettings.volumeTypesToShow)))
         );
     }
 
