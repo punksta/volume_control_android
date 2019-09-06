@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
     <application
         android:name=".SoundApplication"
         android:icon="@mipmap/ic_launcher_new"
@@ -13,6 +12,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service android:name=".SoundService" />
+
+        <receiver
+            android:name=".BootReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="Manages the notification widget"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
 
         <activity android:name=".EditProfileActivity" />
         <activity
@@ -25,5 +37,8 @@
             </intent-filter>
         </activity>
     </application>
+
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
 </manifest>
