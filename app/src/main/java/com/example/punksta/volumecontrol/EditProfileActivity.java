@@ -24,7 +24,7 @@ public class EditProfileActivity extends BaseActivity {
 
     public static final int REQUEST_CODE_EDIT_PROFILE = 0;
     public static final int REQUEST_CODE_NEW_PROFILE = 1;
-    private HashMap<Integer, Integer> volumes = new HashMap<>();
+    private HashMap<Integer, Integer> volumes;
     private String name = "";
     private TextWatcher textWatcher = new TextWatcher() {
         @Override
@@ -75,6 +75,10 @@ public class EditProfileActivity extends BaseActivity {
             } else {
                 KeyboardUtils.showKeyboard(findViewById(R.id.profile_name), this);
             }
+        }
+
+        if (volumes == null) {
+            volumes = new HashMap<>();
         }
 
         buildUi();
