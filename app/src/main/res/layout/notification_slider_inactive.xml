@@ -8,8 +8,8 @@
 
     <FrameLayout
         android:id="@+id/deliver_item"
-        android:layout_width="1dp"
-        android:layout_height="8dp"
+        android:layout_width="0.5dp"
+        android:layout_height="4dp"
         android:layout_gravity="end|bottom"
         android:background="@color/notification_deliver_color" />
 

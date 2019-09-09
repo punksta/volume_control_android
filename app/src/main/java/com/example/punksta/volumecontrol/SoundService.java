@@ -62,16 +62,19 @@ public class SoundService extends Service {
         views.removeAllViews(R.id.volume_slider);
 
         int maxLevel = control.getMaxLevel(typeId);
+        int minLevel = control.getMinLevel(typeId);
+
+        int currentLevel = control.getLevel(typeId);
 
         int maxSliderLevel = Math.min(maxLevel, 8);
 
         float delta = maxLevel / (float) maxSliderLevel;
 
-        for (int i = 0; i <= maxSliderLevel; i++) {
+        for (int i = control.getMinLevel(typeId); i <= maxSliderLevel; i++) {
 
             int volumeLevel = (maxLevel * i) / maxSliderLevel;
 
-            boolean isActive = volumeLevel <= control.getLevel(typeId);
+            boolean isActive = volumeLevel <= currentLevel;
             RemoteViews sliderItemView = new RemoteViews(
                     context.getPackageName(),
                     isActive ? R.layout.notification_slider_active : R.layout.notification_slider_inactive
@@ -96,8 +99,7 @@ public class SoundService extends Service {
         }
 
 
-        views.setTextViewText(R.id.volume_title, capitalize(typeName));
-
+        views.setTextViewText(R.id.volume_title, capitalize(typeName) + " " + (currentLevel - minLevel) + "/" + (maxLevel - minLevel));
 
 
         views.setOnClickPendingIntent(
