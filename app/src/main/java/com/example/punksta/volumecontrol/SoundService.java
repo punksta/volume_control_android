@@ -65,28 +65,31 @@ public class SoundService extends Service {
 
         int maxSliderLevel = Math.min(maxLevel, 8);
 
-        for (int i = 0; i < maxSliderLevel; i++) {
+        float delta = maxLevel / (float) maxSliderLevel;
+
+        for (int i = 0; i <= maxSliderLevel; i++) {
 
             int volumeLevel = (maxLevel * i) / maxSliderLevel;
 
-            boolean isActive = volumeLevel < control.getLevel(typeId);
+            boolean isActive = volumeLevel <= control.getLevel(typeId);
             RemoteViews sliderItemView = new RemoteViews(
                     context.getPackageName(),
                     isActive ? R.layout.notification_slider_active : R.layout.notification_slider_inactive
             );
 
-            if (i + 1 == maxSliderLevel) {
+            if (i == maxSliderLevel) {
                 sliderItemView.setViewVisibility(R.id.deliver_item, View.GONE);
             }
 
-            int requestId = VOLUME_ID_PREFIX + volumeLevel * 100 + typeId;
+            int requestId = VOLUME_ID_PREFIX + (volumeLevel + 1) * 100 + typeId;
+
 
             sliderItemView.setOnClickPendingIntent(
                     R.id.notification_slider_item,
                     PendingIntent.getService(
                             context,
                             requestId,
-                            setVolumeIntent(context, typeId, volumeLevel + 1),
+                            setVolumeIntent(context, typeId, volumeLevel),
                             PendingIntent.FLAG_UPDATE_CURRENT)
             );
             views.addView(R.id.volume_slider, sliderItemView);
@@ -95,7 +98,6 @@ public class SoundService extends Service {
 
         views.setTextViewText(R.id.volume_title, capitalize(typeName));
 
-        float delta = maxLevel / (float) maxSliderLevel;
 
 
         views.setOnClickPendingIntent(
