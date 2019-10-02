@@ -36,6 +36,7 @@ import static com.example.punksta.volumecontrol.EditProfileActivity.REQUEST_CODE
 import static com.example.punksta.volumecontrol.EditProfileActivity.REQUEST_CODE_NEW_PROFILE;
 import static com.example.punksta.volumecontrol.util.DNDModeChecker.isDNDPermissionGranted;
 import static com.example.punksta.volumecontrol.util.DNDModeChecker.showDNDPermissionAlert;
+import static com.example.punksta.volumecontrol.util.ProfileApplier.applyProfile;
 
 public class MainActivity extends BaseActivity {
 
@@ -82,7 +83,7 @@ public class MainActivity extends BaseActivity {
             try {
                 SoundProfile profile = profileStorage.loadById(profileId);
                 if (profile != null) {
-                    applyProfile(profile);
+                    applyProfile(control, profile);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -304,10 +305,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void applyProfile(SoundProfile profile) {
-        Intent i = SoundService.getIntentForProfile(this, profile);
-        startService(i);
-    }
+
 
     private void renderProfile(final SoundProfile profile) {
         final LinearLayout profiles = findViewById(R.id.profile_list);
@@ -318,7 +316,7 @@ public class MainActivity extends BaseActivity {
 
 
         view.setProfileTitle(profile.name);
-        view.setOnActivateClickListener(() -> applyProfile(profile));
+        view.setOnActivateClickListener(() -> applyProfile(control, profile));
         view.setOnEditClickListener(() -> {
             profileStorage.removeProfile(profile.id);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
