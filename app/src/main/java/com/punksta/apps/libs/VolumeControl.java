@@ -110,9 +110,6 @@ public class VolumeControl {
         }
         if (listenerSet.get(type).size() == 0) {
             listenerSet.remove(type);
-            if (audioObserver != null) {
-                audioObserver.lastVolumes.remove(type);
-            }
         }
 
         if (listenerSet.isEmpty() && audioObserver != null) {
@@ -140,7 +137,6 @@ public class VolumeControl {
     private class AudioObserver extends BroadcastReceiver {
 
         //last levels for each AudioType
-        private Map<Integer, Integer> lastVolumes = new HashMap<>();
         private Runnable updateRunnable = () -> {
             update();
             ignoreUpdates = false;
@@ -150,7 +146,6 @@ public class VolumeControl {
             int max = getMaxLevel(type);
             for (VolumeListener volumeListener : listenerSet.get(type))
                 volumeListener.onChangeIndex(type, newLevel, max);
-            lastVolumes.put(type, newLevel);
         }
 
         private void update() {
