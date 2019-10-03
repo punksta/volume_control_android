@@ -7,9 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -19,6 +17,7 @@ import com.example.punksta.volumecontrol.data.Settings;
 import com.example.punksta.volumecontrol.data.SoundProfile;
 import com.example.punksta.volumecontrol.model.SoundProfileStorage;
 import com.example.punksta.volumecontrol.util.DNDModeChecker;
+import com.example.punksta.volumecontrol.util.NotificationWidgetUpdateTracker;
 import com.example.punksta.volumecontrol.util.ProfileApplier;
 import com.punksta.apps.libs.VolumeControl;
 
@@ -29,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SoundService extends Service {
-
     private static final int staticNotificationNumber = 1;
     private static final String staticNotificationId = "static";
     private static final int PROFILE_ID_PREFIX = 10000;
@@ -44,18 +42,17 @@ public class SoundService extends Service {
     private static String EXTRA_TYPE = "EXTRA_TYPE";
     private static String EXTRA_SHOW_PROFILES = "EXTRA_SHOW_PROFILES";
     private static String EXTRA_VOLUME_TYPES_IDS = "EXTRA_VOLUME_TYPES_IDS";
-    NotificationManager manager;
     private List<Integer> profilesToShow = null;
     private boolean showProfiles = false;
     private VolumeControl control;
     private SoundProfileStorage soundProfileStorage;
-    SoundProfileStorage.Listener listener = this::updateNotification;
-    private VolumeControl.VolumeListener volumeListener = new MainActivity.TypeListener(AudioManager.STREAM_MUSIC) {
-        @Override
-        public void onChangeIndex(int autodioStream, int currentLevel, int max) {
-            updateNotification();
-        }
+    private NotificationWidgetUpdateTracker tracker = new NotificationWidgetUpdateTracker();
+    private SoundProfileStorage.Listener listener = this::updateNotification;
+    // every program should have some $$$ in source code
+    private VolumeControl.VolumeListener volumeListener = ($$$, $$, $) -> {
+        updateNotification();
     };
+
 
     private static RemoteViews buildVolumeSlider(Context context, VolumeControl control, int typeId, String typeName) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.notification_volume_slider);
@@ -230,20 +227,54 @@ public class SoundService extends Service {
         return null;
     }
 
+
     private void updateNotification() {
+        updateNotification(false, false);
+    }
+
+    private void startForeground() {
+        updateNotification(true, true);
+    }
+
+
+    private void updateNotification(boolean startService, boolean force) {
         try {
-            manager.notify(
-                    staticNotificationNumber,
-                    buildForegroundNotification(
-                            this,
-                            showProfiles ? soundProfileStorage.loadAll() : new SoundProfile[0],
-                            control,
-                            profilesToShow
-                    )
-            );
+            SoundProfile[] profiles = showProfiles ? soundProfileStorage.loadAll() : new SoundProfile[0];
+
+            if (force || tracker.shouldShow(control, profilesToShow, profiles)) {
+
+                Notification n = buildForegroundNotification(this, profiles, control, profilesToShow);
+
+                if (startService) {
+                    startForeground(
+                            staticNotificationNumber,
+                            n
+                    );
+                } else {
+                    ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(
+                            staticNotificationNumber,
+                            n
+                    );
+                }
+
+                tracker.onNotificationShow(control, profilesToShow, profiles);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+    }
+
+
+    private void registerListeners(List<Integer> profilesToShow) {
+
+        if (profilesToShow != null) {
+            for (Integer id : profilesToShow) {
+                control.registerVolumeListener(id, volumeListener, false);
+            }
+        }
+        soundProfileStorage.addListener(listener);
     }
 
     @Override
@@ -263,6 +294,8 @@ public class SoundService extends Service {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            registerListeners(profilesToShow);
+            startForeground();
             return super.onStartCommand(intent, flags, startId);
         } else if (STOP_ACTION.equals(action)) {
             this.stopSelf(startId);
@@ -278,51 +311,43 @@ public class SoundService extends Service {
                 int nextVolume = (int) (delta > 0 ? Math.ceil(currentVolume + delta) : Math.floor(currentVolume + delta));
                 control.setVolumeLevel(type, nextVolume);
             }
+            registerListeners(profilesToShow);
+            startForeground();
             return START_STICKY;
         } else if (FOREGROUND_ACTION.equals(action)) {
-            soundProfileStorage.addListener(listener);
             createStaticNotificationChannel();
             showProfiles = intent.getBooleanExtra(EXTRA_SHOW_PROFILES, true);
             profilesToShow = (List<Integer>) intent.getSerializableExtra(EXTRA_VOLUME_TYPES_IDS);
-
-            try {
-                startForeground(
-                        staticNotificationNumber,
-                        buildForegroundNotification(this, showProfiles ? soundProfileStorage.loadAll() : new SoundProfile[0], control, profilesToShow)
-                );
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            for (Integer id : profilesToShow) {
-                control.registerVolumeListener(id, volumeListener, false);
-            }
+            registerListeners(profilesToShow);
+            startForeground();
             return START_NOT_STICKY;
         } else {
             return super.onStartCommand(intent, flags, startId);
         }
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         soundProfileStorage.removeListener(listener);
-        control.unregisterAll();
+        for (AudioType t : AudioType.getAudioExtendedTypes()) {
+            control.unRegisterVolumeListener(t.audioStreamName, volumeListener);
+        }
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        soundProfileStorage = SoundProfileStorage.getInstance(this);
-        manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        control = new VolumeControl(this, new Handler());
+        soundProfileStorage = SoundApplication.getSoundProfileStorage(this);
+        control = SoundApplication.getVolumeControl(this);
     }
 
     private void createStaticNotificationChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(staticNotificationId, "Static notification widget", NotificationManager.IMPORTANCE_DEFAULT);
             channel.setSound(null, null);
-            manager.createNotificationChannel(channel);
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).createNotificationChannel(channel);
         }
     }
 }

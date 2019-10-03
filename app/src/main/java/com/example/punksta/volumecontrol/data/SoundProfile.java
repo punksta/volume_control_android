@@ -27,4 +27,5 @@ public class SoundProfile {
         result = 31 * result + (settings != null ? settings.hashCode() : 0);
         return result;
     }
+
 }

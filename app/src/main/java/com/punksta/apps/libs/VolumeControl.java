@@ -47,18 +47,6 @@ public class VolumeControl {
         return context;
     }
 
-    public void unregisterAll() {
-        listenerSet.clear();
-        ringerModeListeners.clear();
-        try {
-            if (audioObserver != null) {
-                context.unregisterReceiver(audioObserver);
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
     public void setVolumeLevel(int type, int index) {
         mediaManager.setStreamVolume(type, index, 0);
     }
