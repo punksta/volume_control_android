@@ -38,7 +38,8 @@
     </style>
 
     <style name="VolumeLevel_Title">
-        <item name="android:textAppearance">@android:style/TextAppearance.Material.Medium</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Material</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="VolumeProfile_Title">
