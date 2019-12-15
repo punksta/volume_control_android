@@ -404,6 +404,10 @@ public class MainActivity extends BaseActivity {
                         profileStorage.saveProfile(profile);
                     }
                     renderProfile(profile);
+
+                    if (DynamicShortcutManager.isPinnedShortcutSupported(this)) {
+                        DynamicShortcutManager.installPinnedShortcut(this, profile);
+                    }
                 }
                 break;
             }

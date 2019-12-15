@@ -32,6 +32,16 @@ public class DynamicShortcutManager {
                 .build();
     }
 
+    public static boolean isPinnedShortcutSupported(Activity activity) {
+        ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
+        return shortcutManager.isRequestPinShortcutSupported();
+    }
+
+    public static boolean installPinnedShortcut(Activity activity, SoundProfile soundProfile) {
+        ShortcutInfo info = createShortcutInfo(activity, soundProfile);
+        ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
+        return shortcutManager.requestPinShortcut(info, null);
+    }
 
     public static void setShortcuts(Activity activity, SoundProfile[] soundProfiles) {
         final List<ShortcutInfo> shortcutInfos = new ArrayList<>();
