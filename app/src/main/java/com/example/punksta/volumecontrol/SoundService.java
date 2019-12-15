@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SoundService extends Service {
+    private static final String TAG = "SoundService";
     private static final int staticNotificationNumber = 1;
     private static final String staticNotificationId = "static";
     private static final int PROFILE_ID_PREFIX = 10000;
@@ -260,10 +262,10 @@ public class SoundService extends Service {
                 tracker.onNotificationShow(control, profilesToShow, profiles);
             }
 
-        } catch (JSONException e) {
+        } catch (RuntimeException | JSONException e) {
+            Log.e(TAG, "Failed to display notification", e);
             e.printStackTrace();
         }
-
     }
 
 
