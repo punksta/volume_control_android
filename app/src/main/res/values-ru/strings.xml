@@ -21,7 +21,7 @@
     <string name="settings">Настройки</string>
     <string name="settings_android_sound_settings">Системные настройки звука</string>
     <string name="settings_darktheme">Темная тема</string>
-    <string name="settings_extended_volume_settings">Дополнительные найстройки</string>
+    <string name="settings_extended_volume_settings">Дополнительные типы громкости</string>
     <string name="settings_notification_widget">Виджет в уведомлениях</string>
     <string name="settings_notification_widget_profiles">Показывать профили в виджете?</string>
     <string name="silence">Тишина</string>
@@ -34,7 +34,7 @@
     <string name="volumeType_notifications">Уведомления</string>
     <string name="volumeType_ring">Рингтон</string>
     <string name="volumeType_systemSounds">Системные звуки</string>
-    <string name="volumeType_voiceCall">Разгоров</string>
+    <string name="volumeType_voiceCall">Разговор</string>
     <string name="volume_profile_name_placeholder">Имя профиля</string>
     <string name="volume_profile_screen_hint">Создай профиль и применяй его потом. Профили можно перетащить на главный экран, долго нажав на иконку приложения.</string>
     <string name="volume_profile_screen_title">Новый профиль громкости</string>
