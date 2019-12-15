@@ -50,6 +50,9 @@ public class SoundService extends Service {
     private SoundProfileStorage soundProfileStorage;
     private NotificationWidgetUpdateTracker tracker = new NotificationWidgetUpdateTracker();
     private SoundProfileStorage.Listener listener = this::updateNotification;
+
+    private boolean isForeground = false;
+
     // every program should have some $$$ in source code
     private VolumeControl.VolumeListener volumeListener = ($$$, $$, $) -> {
         updateNotification();
@@ -231,7 +234,8 @@ public class SoundService extends Service {
 
 
     private void updateNotification() {
-        updateNotification(false, false);
+        if (isForeground)
+            updateNotification(false, false);
     }
 
     private void startForeground() {
@@ -258,6 +262,8 @@ public class SoundService extends Service {
                             n
                     );
                 }
+
+                isForeground = true;
 
                 tracker.onNotificationShow(control, profilesToShow, profiles);
             }
@@ -300,7 +306,12 @@ public class SoundService extends Service {
             startForeground();
             return super.onStartCommand(intent, flags, startId);
         } else if (STOP_ACTION.equals(action)) {
+            stopForeground(true);
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(
+                    staticNotificationNumber
+            );
             this.stopSelf(startId);
+            isForeground = false;
             return super.onStartCommand(intent, flags, startId);
         } else if (CHANGE_VOLUME_ACTION.equals(action)) {
             int type = intent.getIntExtra(EXTRA_TYPE, 0);
