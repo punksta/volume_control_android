@@ -47,18 +47,6 @@ public class VolumeControl {
         return context;
     }
 
-    public void unregisterAll() {
-        listenerSet.clear();
-        ringerModeListeners.clear();
-        try {
-            if (audioObserver != null) {
-                context.unregisterReceiver(audioObserver);
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
     public void setVolumeLevel(int type, int index) {
         mediaManager.setStreamVolume(type, index, 0);
     }
@@ -105,11 +93,12 @@ public class VolumeControl {
     }
 
     public void unRegisterVolumeListener(int type, VolumeListener volumeListener) {
-        if (listenerSet.get(type) != null) {
-            listenerSet.get(type).remove(volumeListener);
-        }
-        if (listenerSet.get(type).size() == 0) {
-            listenerSet.remove(type);
+        Set<VolumeListener> volumeListeners = listenerSet.get(type);
+        if (volumeListeners != null) {
+            volumeListeners.remove(volumeListener);
+            if (volumeListeners.size() == 0) {
+                listenerSet.remove(type);
+            }
         }
 
         if (listenerSet.isEmpty() && audioObserver != null) {

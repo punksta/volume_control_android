@@ -60,7 +60,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        profileStorage = SoundProfileStorage.getInstance(this);
+        profileStorage = SoundApplication.getSoundProfileStorage(this);
         buildUi();
         if (savedInstanceState == null) {
             if (handleIntent(getIntent())) {

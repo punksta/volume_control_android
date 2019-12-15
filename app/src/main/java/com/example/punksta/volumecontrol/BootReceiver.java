@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.preference.PreferenceManager;
 
 import com.example.punksta.volumecontrol.data.Settings;
 import com.example.punksta.volumecontrol.model.SettingsStorage;
@@ -15,7 +14,7 @@ import java.util.List;
 
 public class BootReceiver extends BroadcastReceiver {
 
-    List<String> actionsToStartService = Arrays.asList(
+    private static List<String> actionsToStartService = Arrays.asList(
             "android.intent.action.QUICKBOOT_POWERON",
             "android.intent.action.BOOT_COMPLETED"
     );
@@ -23,7 +22,7 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (actionsToStartService.contains(intent.getAction())) {
-            SettingsStorage settingsStorage = new SettingsStorage(PreferenceManager.getDefaultSharedPreferences(context));
+            SettingsStorage settingsStorage = SoundApplication.getSettingsStorage(context);
             Settings settings = settingsStorage.settings();
             if (settings.isNotificationWidgetEnabled) {
                 Intent i = SoundService.getIntentForForeground(context, settings);

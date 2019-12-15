@@ -1,5 +1,6 @@
 package com.example.punksta.volumecontrol.model;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -22,21 +23,27 @@ public class SoundProfileStorage {
     private Set<Listener> listeners = new HashSet<>();
     private List<Integer> ids;
 
+
+    SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = (sharedPreferences, key) -> {
+        if (key.equals("ids")) {
+            for (Listener listener : listeners) {
+                listener.onStorageChanged();
+            }
+        }
+    };
+
     private SoundProfileStorage(SharedPreferences preferences) {
         this.preferences = preferences;
-        SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = (sharedPreferences, key) -> {
-            if (key.equals("ids")) {
-                for (Listener listener : listeners) {
-                    listener.onStorageChanged();
-                }
-            }
-        };
         preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 
-    public static SoundProfileStorage getInstance(Context context) {
+    public static SoundProfile getInstance(Context context) {
+        return getInstance(context.getApplicationContext());
+    }
+
+    public static SoundProfileStorage getInstance(Application context) {
         if (instance == null) {
-            instance = new SoundProfileStorage(PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext()));
+            instance = new SoundProfileStorage(PreferenceManager.getDefaultSharedPreferences(context));
         }
         return instance;
     }

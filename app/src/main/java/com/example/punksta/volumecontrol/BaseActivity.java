@@ -2,8 +2,6 @@ package com.example.punksta.volumecontrol;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
 
 import com.example.punksta.volumecontrol.data.Settings;
 import com.example.punksta.volumecontrol.model.SettingsStorage;
@@ -16,9 +14,9 @@ abstract public class BaseActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        control = new VolumeControl(this.getApplicationContext(), new Handler());
+        control = SoundApplication.getVolumeControl(this);
+        settingsStorage = SoundApplication.getSettingsStorage(this);
 
-        settingsStorage = new SettingsStorage(PreferenceManager.getDefaultSharedPreferences(this));
         settings = settingsStorage.settings();
 
         if (settings.isDarkThemeEnabled) {
