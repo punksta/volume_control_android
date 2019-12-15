@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Volume Control</string>
+    <string name="acra_dialog_message">Приложение завершилось с ошибкой. Отправить ошибку разработчику по email?</string>
+    <string name="acra_dialog_title">Отправить</string>
+    <string name="btn_apply_profile">Применить</string>
+    <string name="btn_delete_profile">Удалить</string>
+    <string name="defaultProfileName">Профиль</string>
+    <string name="main_menu_silence">Тишина</string>
+    <string name="main_menu_silence_off">Полная громкость</string>
+    <string name="dnd_permission_message">Данное разрешение необходимо для управления громкостью в режиме \"Не беспокоить\"</string>
+    <string name="dnd_permission_title">Управлять режимом \"Не беспокоить\"?</string>
+    <string name="main_screen_current_volume_title">Громкость</string>
+    <string name="main_screen_profiles_title">Профили громкости</string>
+    <string name="new_profile_add">Добавить новый</string>
+    <string name="rate_this_app">Оставить отзыв</string>
+    <string name="ring">Будильник</string>
+    <string name="notification_widget_featured">Свайпи вниз, чтобы открыть настройки звука</string>
+    <string name="notification_widget">Свайпи вниз, чтобы открыть настройки звука</string>
+    <string name="save">Сохранить</string>
+    <string name="settings">Настройки</string>
+    <string name="settings_android_sound_settings">Системные настройки звука</string>
+    <string name="settings_darktheme">Темная тема</string>
+    <string name="settings_extended_volume_settings">Дополнительные найстройки</string>
+    <string name="settings_notification_widget">Виджет в уведомлениях</string>
+    <string name="settings_notification_widget_profiles">Показывать профили в виджете?</string>
+    <string name="silence">Тишина</string>
+    <string name="vibrate">Вибрация</string>
+    <string name="vibrate_mode">Режим вибрации</string>
+    <string name="volumeType_alarm">Будильник</string>
+    <string name="volumeType_dtmf">DTMF токены</string>
+    <string name="volumeType_accessibility">Доступность</string>
+    <string name="volumeType_media">Музыка, видео, игры</string>
+    <string name="volumeType_notifications">Уведомления</string>
+    <string name="volumeType_ring">Рингтон</string>
+    <string name="volumeType_systemSounds">Системные звуки</string>
+    <string name="volumeType_voiceCall">Разгоров</string>
+    <string name="volume_profile_name_placeholder">Имя профиля</string>
+    <string name="volume_profile_screen_hint">Создай профиль и применяй его потом. Профили можно перетащить на главный экран, долго нажав на иконку приложения.</string>
+    <string name="volume_profile_screen_title">Новый профиль громкости</string>
+    <string name="volume_types_in_widget">Выбрать типы громкости в виджете</string>
+</resources>

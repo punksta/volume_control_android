@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Volume Control</string>
-    <string name="main_menu_silence" translatable="false">Silence</string>
-    <string name="main_menu_silence_off" translatable="false">Full volume</string>
+    <string name="main_menu_silence">Silence</string>
+    <string name="main_menu_silence_off">Full volume</string>
     <string name="btn_apply_profile">Apply</string>
     <string name="btn_delete_profile">Delete</string>
     <string name="new_profile_add">Add new</string>
