@@ -1,38 +1,57 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary_light</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_light</item>
+        <item name="colorAccent">@color/colorAccent_light</item>
         <item name="themeColorAccent">@color/colorAccent_light</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.Dark" parent="android:Theme.Holo.NoActionBar">
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="background">@color/background_dark</item>
+        <item name="colorPrimary">@color/colorPrimary_dark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_dark</item>
+        <item name="colorAccent">@color/colorAccent_dark</item>
         <item name="themeColorAccent">@color/colorAccent_dark</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="ScreenHeader">
-        <item name="android:textAppearance">@android:style/TextAppearance.Holo.Large</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Headline</item>
     </style>
 
     <style name="ScreenSubHeader">
-        <item name="android:textAppearance">@android:style/TextAppearance.Holo.Medium</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Subhead</item>
+    </style>
+
+    <style name="WindowAnimationTransition">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
 
     <style name="VolumeLevel_Title">
-        <item name="android:textAppearance">@android:style/TextAppearance.Holo.Medium</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="VolumeProfile_Title">
-        <item name="android:textAppearance">@android:style/TextAppearance.Holo.Medium</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Large</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
-    <style name="Settings_button" />
+    <style name="VolumeProfile_Button" parent="Widget.AppCompat.Button" />
 
-    <style name="VolumeProfile_Button" />
+    <style name="Settings_button" parent="Widget.AppCompat.Button.Borderless.Colored" />
 
-    <style name="Profile_Add_Button" />
+    <style name="Profile_Add_Button" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:minWidth">0dp</item>
+    </style>
 
-    <style name="CrashReportTheme" parent="android:Theme.Holo.Dialog"/>
+    <style name="CrashReportTheme" parent="Theme.AppCompat.Dialog.Alert" />
 
 </resources>

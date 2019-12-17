@@ -1,13 +1,14 @@
 package com.example.punksta.volumecontrol;
 
-import android.app.Activity;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.punksta.volumecontrol.data.Settings;
 import com.example.punksta.volumecontrol.model.SettingsStorage;
 import com.punksta.apps.libs.VolumeControl;
 
-abstract public class BaseActivity extends Activity {
+abstract public class BaseActivity extends AppCompatActivity {
     protected Settings settings;
     protected VolumeControl control;
     private SettingsStorage settingsStorage;

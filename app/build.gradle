@@ -32,8 +32,10 @@ android {
 }
 
 def acraVersion = '5.4.0'
+def appcompat_version = "1.1.0"
 
 dependencies {
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation "ch.acra:acra-mail:$acraVersion"
     implementation "ch.acra:acra-dialog:$acraVersion"

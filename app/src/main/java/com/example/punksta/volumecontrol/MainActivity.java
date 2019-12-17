@@ -2,7 +2,6 @@ package com.example.punksta.volumecontrol;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -14,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.example.punksta.volumecontrol.data.SoundProfile;
 import com.example.punksta.volumecontrol.model.SoundProfileStorage;
@@ -122,10 +123,8 @@ public class MainActivity extends BaseActivity {
                 isCheckedArray[i] = checked.contains(allThings.get(i).audioStreamName);
             }
 
-            new AlertDialog.Builder(this,
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
-                            android.R.style.Theme_Material_Dialog_Alert : android.R.style.Theme_Holo_Dialog
-            )
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.volume_types_in_widget)
                     .setMultiChoiceItems(titles, isCheckedArray, (dialogInterface, i, b) -> {
                         if (b) {
                             checked.add(allThings.get(i).audioStreamName);

@@ -7,12 +7,13 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
+
+import androidx.core.app.NotificationCompat;
 
 import com.example.punksta.volumecontrol.data.Settings;
 import com.example.punksta.volumecontrol.data.SoundProfile;
@@ -131,7 +132,7 @@ public class SoundService extends Service {
             VolumeControl control,
             List<Integer> volumeTypesToShow
     ) {
-        Notification.Builder builder = new Notification.Builder(context);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, staticNotificationId);
 
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_view);
@@ -166,24 +167,17 @@ public class SoundService extends Service {
                 .setContentTitle(context.getString(R.string.app_name))
                 .setOngoing(true)
                 .setContentText(context.getString(R.string.notification_widget))
-//                .setAutoCancel(false)
                 .setSmallIcon(R.drawable.notification_icon)
                 .setTicker(context.getString(R.string.app_name))
                 .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0));
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setChannelId(staticNotificationId);
-            if ((volumeTypesToShow != null && volumeTypesToShow.size() > 0) || (profiles != null && profiles.length > 0)) {
-                builder.setContentText(context.getString(R.string.notification_widget_featured))
-                        .setCustomBigContentView(remoteViews);
-            }
+        if ((volumeTypesToShow != null && volumeTypesToShow.size() > 0) || (profiles != null && profiles.length > 0)) {
+            builder.setContentText(context.getString(R.string.notification_widget_featured))
+                    .setCustomBigContentView(remoteViews);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            return (builder.build());
-        } else {
-            return builder.getNotification();
-        }
+
+        return builder.build();
     }
 
     private static String capitalize(String str) {
@@ -360,6 +354,7 @@ public class SoundService extends Service {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(staticNotificationId, "Static notification widget", NotificationManager.IMPORTANCE_DEFAULT);
             channel.setSound(null, null);
+            channel.enableVibration(false);
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).createNotificationChannel(channel);
         }
     }

@@ -1,12 +1,13 @@
 package com.example.punksta.volumecontrol.util;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.example.punksta.volumecontrol.R;
 
@@ -18,7 +19,8 @@ public class DNDModeChecker {
 
     @TargetApi(Build.VERSION_CODES.M)
     public static void showDNDPermissionAlert(Context context) {
-        new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert).setTitle(R.string.dnd_permission_title)
+        new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert)
+                .setTitle(R.string.dnd_permission_title)
                 .setMessage(context.getString(R.string.dnd_permission_message))
                 .setPositiveButton("ok", (dialogInterface, i) -> {
                     Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
