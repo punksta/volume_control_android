@@ -31,23 +31,41 @@ public class SoundApplication extends Application {
     private SettingsStorage settingsStorage;
 
     public static VolumeControl getVolumeControl(Context context) {
-        return ((SoundApplication) context.getApplicationContext()).volumeControl;
+        return ((SoundApplication) context.getApplicationContext()).getVolumeControl();
     }
 
     public static SoundProfileStorage getSoundProfileStorage(Context context) {
-        return ((SoundApplication) context.getApplicationContext()).profileStorage;
+        return ((SoundApplication) context.getApplicationContext()).getProfileStorage();
     }
 
     public static SettingsStorage getSettingsStorage(Context context) {
-        return ((SoundApplication) context.getApplicationContext()).settingsStorage;
+        return ((SoundApplication) context.getApplicationContext()).getSettingsStorage();
+    }
+
+    public VolumeControl getVolumeControl() {
+        if (volumeControl == null) {
+            volumeControl = new VolumeControl(this, new Handler());
+        }
+        return volumeControl;
+    }
+
+    public SoundProfileStorage getProfileStorage() {
+        if (profileStorage == null) {
+            profileStorage = SoundProfileStorage.getInstance(this);
+        }
+        return profileStorage;
+    }
+
+    public SettingsStorage getSettingsStorage() {
+        if (settingsStorage == null) {
+            settingsStorage = new SettingsStorage(PreferenceManager.getDefaultSharedPreferences(this));
+        }
+        return settingsStorage;
     }
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         ACRA.init(this);
-        volumeControl = new VolumeControl(this, new Handler());
-        profileStorage = SoundProfileStorage.getInstance(this);
-        settingsStorage = new SettingsStorage(PreferenceManager.getDefaultSharedPreferences(this));
     }
 }
