@@ -404,8 +404,10 @@ public class MainActivity extends BaseActivity {
                     }
                     renderProfile(profile);
 
-                    if (DynamicShortcutManager.isPinnedShortcutSupported(this)) {
-                        DynamicShortcutManager.installPinnedShortcut(this, profile);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        if (DynamicShortcutManager.isPinnedShortcutSupported(this)) {
+                            DynamicShortcutManager.installPinnedShortcut(this, profile);
+                        }
                     }
                 }
                 break;
