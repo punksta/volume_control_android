@@ -51,6 +51,7 @@
     </LinearLayout>
 
     <TextView
+        style="@style/TextAppearance.Compat.Notification"
         android:id="@+id/volume_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,7 +60,6 @@
         android:gravity="center"
         android:minWidth="50dp"
         android:text="@string/volumeType_media"
-        android:textAppearance="@android:style/TextAppearance.Material.Notification"
         android:textColor="@color/notification_volume_title_color"
         android:textSize="17sp"
         android:textStyle="normal" />
