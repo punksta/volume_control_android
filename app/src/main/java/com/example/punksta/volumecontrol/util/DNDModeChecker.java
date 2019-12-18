@@ -19,10 +19,10 @@ public class DNDModeChecker {
 
     @TargetApi(Build.VERSION_CODES.M)
     public static void showDNDPermissionAlert(Context context) {
-        new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert)
+        new AlertDialog.Builder(context)
                 .setTitle(R.string.dnd_permission_title)
                 .setMessage(context.getString(R.string.dnd_permission_message))
-                .setPositiveButton("ok", (dialogInterface, i) -> {
+                .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
                     Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                     context.startActivity(intent);
                 })
