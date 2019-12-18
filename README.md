@@ -16,7 +16,6 @@ Simple Android app for managing volume levels
 </a>
 
 ## Details
-- No support/AndroidX libraries (tiny APK size)
 - Simple as can be (back to 2010-style architecture)
 - Dark theme
 
