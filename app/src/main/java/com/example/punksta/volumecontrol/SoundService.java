@@ -14,6 +14,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.example.punksta.volumecontrol.data.Settings;
 import com.example.punksta.volumecontrol.data.SoundProfile;
@@ -51,6 +52,8 @@ public class SoundService extends Service {
     private SoundProfileStorage soundProfileStorage;
     private NotificationWidgetUpdateTracker tracker = new NotificationWidgetUpdateTracker();
     private SoundProfileStorage.Listener listener = this::updateNotification;
+
+    private NotificationManagerCompat notificationManagerCompat;
 
     private boolean isForeground = false;
 
@@ -251,10 +254,8 @@ public class SoundService extends Service {
                             n
                     );
                 } else {
-                    ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(
-                            staticNotificationNumber,
-                            n
-                    );
+                    notificationManagerCompat.notify(staticNotificationNumber,
+                            n);
                 }
 
                 isForeground = true;
@@ -301,7 +302,7 @@ public class SoundService extends Service {
             return super.onStartCommand(intent, flags, startId);
         } else if (STOP_ACTION.equals(action)) {
             stopForeground(true);
-            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(
+            notificationManagerCompat.cancel(
                     staticNotificationNumber
             );
             this.stopSelf(startId);
@@ -346,6 +347,7 @@ public class SoundService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        notificationManagerCompat = NotificationManagerCompat.from(this);
         soundProfileStorage = SoundApplication.getSoundProfileStorage(this);
         control = SoundApplication.getVolumeControl(this);
     }
@@ -355,7 +357,7 @@ public class SoundService extends Service {
             NotificationChannel channel = new NotificationChannel(staticNotificationId, "Static notification widget", NotificationManager.IMPORTANCE_DEFAULT);
             channel.setSound(null, null);
             channel.enableVibration(false);
-            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+            notificationManagerCompat.createNotificationChannel(channel);
         }
     }
 }
