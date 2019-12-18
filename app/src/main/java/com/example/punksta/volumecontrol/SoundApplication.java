@@ -4,9 +4,11 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 import com.example.punksta.volumecontrol.model.SettingsStorage;
 import com.example.punksta.volumecontrol.model.SoundProfileStorage;
+import com.example.punksta.volumecontrol.util.TestLabUtils;
 import com.punksta.apps.libs.VolumeControl;
 
 import org.acra.ACRA;
@@ -67,5 +69,9 @@ public class SoundApplication extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         ACRA.init(this);
+
+        if (TestLabUtils.isInTestLab(this)) {
+            Toast.makeText(this, "in testlab", Toast.LENGTH_LONG).show();
+        }
     }
 }

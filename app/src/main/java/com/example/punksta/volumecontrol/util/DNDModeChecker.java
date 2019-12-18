@@ -14,7 +14,7 @@ import com.example.punksta.volumecontrol.R;
 public class DNDModeChecker {
     public static boolean isDNDPermissionGranted(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || notificationManager.isNotificationPolicyAccessGranted();
+        return TestLabUtils.isInTestLab(context) || Build.VERSION.SDK_INT < Build.VERSION_CODES.M || notificationManager.isNotificationPolicyAccessGranted();
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -26,7 +26,7 @@ public class DNDModeChecker {
                     Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                     context.startActivity(intent);
                 })
-                .setCancelable(false)
+                .setCancelable(true)
                 .create()
                 .show();
     }
