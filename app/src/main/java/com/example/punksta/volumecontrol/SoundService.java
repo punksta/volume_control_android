@@ -305,7 +305,7 @@ public class SoundService extends Service {
             notificationManagerCompat.cancel(
                     staticNotificationNumber
             );
-            this.stopSelf(startId);
+            stop(startId);
             isForeground = false;
             return super.onStartCommand(intent, flags, startId);
         } else if (CHANGE_VOLUME_ACTION.equals(action)) {
@@ -334,6 +334,10 @@ public class SoundService extends Service {
         }
     }
 
+    private void stop(int startId) {
+        this.stopForeground(true);
+        this.stopSelfResult(startId);
+    }
 
     @Override
     public void onDestroy() {
