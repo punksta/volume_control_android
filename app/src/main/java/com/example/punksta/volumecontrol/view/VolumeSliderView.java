@@ -83,6 +83,7 @@ public class VolumeSliderView extends FrameLayout {
 
     public void setVolumeName(CharSequence string) {
         mTitle.setText(string);
+        seekBar.setContentDescription(getContext().getString(R.string.volume_switch, string));
     }
 
     public void setCurrentVolume(int progress) {

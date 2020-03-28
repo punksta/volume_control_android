@@ -50,4 +50,6 @@
 
     <string name="delete_profile_button">Delete %1$s profile</string>
     <string name="apply_profile_button">Delete %1$s profile</string>
+
+    <string name="volume_switch">%1$s volume type level</string>
 </resources>

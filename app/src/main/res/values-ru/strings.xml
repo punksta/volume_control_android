@@ -42,4 +42,5 @@
 
     <string name="delete_profile_button">Прменить %1$s профиль</string>
     <string name="apply_profile_button">Удалить %1$s профиль</string>
+    <string name="volume_switch">настройка громкости типа %1$s</string>
 </resources>
