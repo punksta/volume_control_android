@@ -58,5 +58,7 @@ public class VolumeProfileView extends FrameLayout {
 
     public void setProfileTitle(CharSequence title) {
         mTitle.setText(title);
+        deleteButton.setContentDescription(getContext().getString(R.string.delete_profile_button, title));
+        activeButton.setContentDescription(getContext().getString(R.string.apply_profile_button, title));
     }
 }

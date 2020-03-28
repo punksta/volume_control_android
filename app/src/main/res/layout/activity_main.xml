@@ -70,6 +70,7 @@
             android:orientation="vertical">
 
             <Switch
+                android:minHeight="48dp"
                 android:id="@+id/dark_theme_switcher"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -77,17 +78,17 @@
                 android:text="@string/settings_darktheme" />
 
             <Switch
+                android:minHeight="48dp"
                 android:id="@+id/extended_volumes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:text="@string/settings_extended_volume_settings" />
 
             <Switch
                 android:id="@+id/notification_widget"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:minHeight="48dp"
                 android:text="@string/settings_notification_widget" />
 
             <Switch
@@ -96,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="2dp"
+                android:minHeight="48dp"
                 android:text="@string/settings_notification_widget_profiles" />
 
             <TextView
@@ -105,7 +106,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:minHeight="48dp"
                 android:text="@string/volume_types_in_widget"
                 android:textColor="?attr/themeColorAccent"
                 android:textSize="15sp" />
@@ -117,12 +119,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="-8dp"
                 android:layout_marginLeft="-8dp"
-                android:layout_marginTop="12dp"
+                android:minHeight="48dp"
                 android:text="@string/settings_android_sound_settings" />
 
             <Button
                 android:id="@+id/rate_app"
                 style="@style/Settings_button"
+                android:minHeight="48dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="-8dp"
