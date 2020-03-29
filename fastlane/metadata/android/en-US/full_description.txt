@@ -1,5 +1,3 @@
-Simple volume control application without unnecessary features.
-
 Features:
    * Manage volume of your device: call, ring, notifications, media
    * Create custom volume profiles
