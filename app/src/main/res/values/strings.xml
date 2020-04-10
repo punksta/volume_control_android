@@ -28,6 +28,8 @@
     <string name="vibrate_mode">Vibrate mode</string>
     <string name="silence">Silence</string>
     <string name="vibrate">Vibrate</string>
+    <string name="vibrate_on_calls">Vibrate on calls?</string>
+
     <string name="ring">Ring</string>
     <string name="notification_widget">Click to open app, swipe down to extend</string>
     <string name="notification_widget_featured">Click to open app</string>

@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.Settings;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +29,9 @@ public class VolumeControl {
     private final Handler handler;
     private AudioObserver audioObserver;
     private boolean ignoreUpdates = false;
+
+    private String VIBRATE_WHEN_RINGING = "vibrate_when_ringing";
+
 
     public VolumeControl(Context context, Handler handler) {
         this.context = context;
@@ -71,6 +75,7 @@ public class VolumeControl {
         return mediaManager.getStreamVolume(type);
     }
 
+
     public void registerVolumeListener(int type, final VolumeListener volumeListener, boolean sendCurrentValue) {
         boolean firstAudioType = listenerSet.isEmpty();
         boolean isFirstListener = !listenerSet.containsKey(type);
@@ -107,9 +112,14 @@ public class VolumeControl {
         }
     }
 
-    public void requestRingerMode(int ringerMode) {
-        mediaManager.setRingerMode(ringerMode);
+    public void setVibrateOnCalls(boolean vibrate) {
+        Settings.System.putInt(getContext().getContentResolver(), VIBRATE_WHEN_RINGING, vibrate ? 1 : 0);
     }
+
+    public boolean isVibrateOnCallsEnabled() throws Settings.SettingNotFoundException {
+       return Settings.System.getInt(getContext().getContentResolver(), VIBRATE_WHEN_RINGING) == 1;
+    }
+
 
     public int getRingerMode() {
         return mediaManager.getRingerMode();
@@ -142,8 +152,10 @@ public class VolumeControl {
                 int current = getLevel(entry.getKey());
                 notifyListeners(entry.getKey(), current);
             }
+            int ringerMode = getRingerMode();
+            System.out.println("new ringer mode " + ringerMode);
             for (RingerModeChangeListener ringerModeListener : ringerModeListeners) {
-                ringerModeListener.onChange(getRingerMode());
+                //ringerModeListener.onChange(ringerMode);
             }
         }
 

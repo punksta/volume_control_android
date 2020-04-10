@@ -4,34 +4,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/silence_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="@string/silence" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/silence_title"
-        android:layout_centerHorizontal="true"
-        android:text="@string/vibrate" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/silence_title"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="8dp"
-        android:text="@string/ring" />
-
-    <SeekBar
-        android:id="@+id/ring_mode_switch"
+    <RadioGroup
+        android:id="@+id/vibrate_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/silence_title"
-        android:layout_marginTop="8dp" />
+        android:orientation="vertical">
+        <RadioButton android:id="@+id/radio_silence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/silence" />
+
+        <RadioButton android:id="@+id/radio_vibrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/vibrate" />
+
+        <RadioButton android:id="@+id/radio_ring"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ring" />
+    </RadioGroup>
+
 
 </RelativeLayout>

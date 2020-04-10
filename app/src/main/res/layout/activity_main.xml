@@ -30,6 +30,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <Switch
+            android:textSize="17sp"
+            android:minHeight="48dp"
+            android:id="@+id/vibrate_on_calls"
+            android:text="@string/vibrate_on_calls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
         <TextView
             android:id="@+id/profiles_title_id"
             style="@style/ScreenHeader"

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -38,6 +39,7 @@ import static com.example.punksta.volumecontrol.EditProfileActivity.REQUEST_CODE
 import static com.example.punksta.volumecontrol.util.DNDModeChecker.isDNDPermissionGranted;
 import static com.example.punksta.volumecontrol.util.DNDModeChecker.showDNDPermissionAlert;
 import static com.example.punksta.volumecontrol.util.ProfileApplier.applyProfile;
+import static com.example.punksta.volumecontrol.util.WritePermissionChecker.checkWriteSettingsPermission;
 
 public class MainActivity extends BaseActivity {
 
@@ -229,7 +231,7 @@ public class MainActivity extends BaseActivity {
 
         RingerModeSwitch ringerModeSwitch = findViewById(R.id.ringerMode);
         ringerModeSwitch.setRingMode(control.getRingerMode());
-        ringerModeSwitch.setRingSwitcher(control::requestRingerMode);
+
         control.addOnRingerModeListener(ringerModeSwitcher);
         ringerModeSwitch.setVisibility(View.GONE);
 
@@ -263,11 +265,34 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+        Switch vibrateOnCalls = findViewById(R.id.vibrate_on_calls);
+        vibrateOnCalls.setOnCheckedChangeListener((compoundButton, isEnabled) -> {
+            if (checkWriteSettingsPermission(MainActivity.this, 0)) {
+                control.setVibrateOnCalls(isEnabled);
+            } else {
+                try {
+                    vibrateOnCalls.setChecked(control.isVibrateOnCallsEnabled());
+                } catch (Settings.SettingNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
 
         try {
             renderProfiles();
         } catch (JSONException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void updateVibrateOnCalls() {
+        Switch vibrateOnCalls = findViewById(R.id.vibrate_on_calls);
+        try {
+            vibrateOnCalls.setChecked(control.isVibrateOnCallsEnabled());
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            vibrateOnCalls.setVisibility(View.GONE);
         }
     }
 
@@ -302,6 +327,7 @@ public class MainActivity extends BaseActivity {
         if (isNotificationWidgetEnabled() && isDNDPermissionGranted(this)) {
             startSoundService();
         }
+        updateVibrateOnCalls();
     }
 
 
