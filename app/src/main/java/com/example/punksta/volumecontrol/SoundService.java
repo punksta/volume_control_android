@@ -301,6 +301,7 @@ public class SoundService extends Service {
             startForeground();
             return super.onStartCommand(intent, flags, startId);
         } else if (STOP_ACTION.equals(action)) {
+            startForeground();
             stopForeground(true);
             notificationManagerCompat.cancel(
                     staticNotificationNumber
