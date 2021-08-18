@@ -11,22 +11,7 @@ import com.example.punksta.volumecontrol.model.SoundProfileStorage;
 import com.example.punksta.volumecontrol.util.TestLabUtils;
 import com.punksta.apps.libs.VolumeControl;
 
-import org.acra.ACRA;
-import org.acra.annotation.AcraCore;
-import org.acra.annotation.AcraDialog;
-import org.acra.annotation.AcraMailSender;
-import org.acra.data.StringFormat;
 
-@AcraCore(buildConfigClass = BuildConfig.class,
-        reportFormat = StringFormat.KEY_VALUE_LIST,
-        alsoReportToAndroidFramework = true
-)
-@AcraMailSender(mailTo = "punksta@protonmail.com", reportFileName = "crash-log.stacktrace")
-@AcraDialog(
-        resTitle = R.string.acra_dialog_title,
-        resText = R.string.acra_dialog_message,
-        resTheme = R.style.CrashReportTheme
-)
 public class SoundApplication extends Application {
     private VolumeControl volumeControl;
     private SoundProfileStorage profileStorage;
@@ -68,7 +53,6 @@ public class SoundApplication extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        ACRA.init(this);
 
         if (TestLabUtils.isInTestLab(this)) {
             Toast.makeText(this, "in testlab", Toast.LENGTH_LONG).show();
