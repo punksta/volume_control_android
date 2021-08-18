@@ -298,7 +298,7 @@ public class MainActivity extends BaseActivity {
 
     private void stopSoundService() {
         Intent i = SoundService.getStopIntent(this);
-        startService(i);
+        stopService(i);
     }
 
     private void startSoundService() {
