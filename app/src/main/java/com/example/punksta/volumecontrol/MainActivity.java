@@ -11,9 +11,9 @@ import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.SwitchCompat;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -53,6 +53,7 @@ public class MainActivity extends BaseActivity {
     };
 
     public static Intent createOpenProfileIntent(Context context, SoundProfile profile) {
+        DynamicShortcutManager.reportUsage(context, profile);
         Intent intent1 = new Intent(context.getApplicationContext(), MainActivity.class);
         intent1.setAction(Intent.ACTION_VIEW);
         intent1.putExtra(PROFILE_ID, profile.id);
@@ -100,12 +101,12 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        //super.onSaveInstanceState(outState, outPersistentState);
+        super.onSaveInstanceState(outState, outPersistentState);
     }
 
     private void renderVolumeTypesInNotificationWidget() {
@@ -204,7 +205,7 @@ public class MainActivity extends BaseActivity {
 
     private void buildUi() {
 
-        Switch s = findViewById(R.id.dark_theme_switcher);
+        SwitchCompat s = findViewById(R.id.dark_theme_switcher);
 
         s.setChecked(isDarkTheme());
         s.setOnCheckedChangeListener((buttonView, isChecked) -> setThemeAndRecreate(isChecked));
@@ -219,7 +220,7 @@ public class MainActivity extends BaseActivity {
 
         renderProfileItems();
 
-        Switch s2 = findViewById(R.id.extended_volumes);
+        SwitchCompat s2 = findViewById(R.id.extended_volumes);
         s2.setChecked(isExtendedVolumesEnabled());
         s2.setOnCheckedChangeListener((buttonView, isChecked) -> setExtendedVolumesEnabled(isChecked));
 
@@ -235,11 +236,11 @@ public class MainActivity extends BaseActivity {
         control.addOnRingerModeListener(ringerModeSwitcher);
         ringerModeSwitch.setVisibility(View.GONE);
 
-        Switch notificationSwitch = findViewById(R.id.notification_widget);
+        SwitchCompat notificationSwitch = findViewById(R.id.notification_widget);
 
         notificationSwitch.setChecked(isNotificationWidgetEnabled());
 
-        Switch profilesSwitch = findViewById(R.id.notification_widget_profiles);
+        SwitchCompat profilesSwitch = findViewById(R.id.notification_widget_profiles);
 
         profilesSwitch.setChecked(settings.showProfilesInNotification);
 
@@ -265,7 +266,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        Switch vibrateOnCalls = findViewById(R.id.vibrate_on_calls);
+        SwitchCompat vibrateOnCalls = findViewById(R.id.vibrate_on_calls);
         vibrateOnCalls.setOnCheckedChangeListener((compoundButton, isEnabled) -> {
             if (checkWriteSettingsPermission(MainActivity.this, 0)) {
                 control.setVibrateOnCalls(isEnabled);
@@ -287,7 +288,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void updateVibrateOnCalls() {
-        Switch vibrateOnCalls = findViewById(R.id.vibrate_on_calls);
+        SwitchCompat vibrateOnCalls = findViewById(R.id.vibrate_on_calls);
         try {
             vibrateOnCalls.setChecked(control.isVibrateOnCallsEnabled());
         } catch (Throwable throwable) {

@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.punksta.volumecontrol">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
 
     <uses-permission android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!--
+    TODO: tools:overrideLibrary="androidx.appcompat, androidx.appcompat.resources" so we can use minSdk=15 again?
+    -->
 
     <application
         android:name=".SoundApplication"
@@ -18,7 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_new_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
-        <service android:name=".SoundService" />
+        <service android:name=".SoundService" android:foregroundServiceType="specialUse" />
 
         <receiver
             android:name=".BootReceiver"
@@ -32,20 +38,16 @@
             </intent-filter>
         </receiver>
 
-
         <activity android:name=".EditProfileActivity" />
         <activity
+            android:exported="true"
             android:name=".MainActivity"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
-
-
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
 </manifest>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_notification_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,7 +16,7 @@
         android:layout_height="20dp"
         android:scaleType="centerInside"
         android:src="@drawable/notification_icon"
-        android:tint="@android:color/black" />
+        app:tint="@android:color/black" />
 
     <TextView
         android:id="@+id/app_title"

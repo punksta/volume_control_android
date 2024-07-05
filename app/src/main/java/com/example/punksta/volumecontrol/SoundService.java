@@ -1,5 +1,7 @@
 package com.example.punksta.volumecontrol;
 
+import java.util.Locale;
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -7,6 +9,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.punksta.volumecontrol.data.Settings;
 import com.example.punksta.volumecontrol.data.SoundProfile;
@@ -149,7 +154,7 @@ public class SoundService extends Service {
 
                 int requestId = PROFILE_ID_PREFIX + profile.id;
 
-                pendingIntent = PendingIntent.getService(context, requestId, i, 0);
+                pendingIntent = PendingIntent.getService(context, requestId, i, PendingIntent.FLAG_IMMUTABLE);
                 profileViews.setOnClickPendingIntent(R.id.notification_profile_title, pendingIntent);
                 remoteViews.addView(R.id.notifications_user_profiles, profileViews);
             }
@@ -164,7 +169,9 @@ public class SoundService extends Service {
                 }
             }
 
-            remoteViews.setOnClickPendingIntent(R.id.remove_notification_action, PendingIntent.getService(context, 100, getStopIntent(context), 0));
+            remoteViews.setOnClickPendingIntent(R.id.remove_notification_action,
+                    PendingIntent.getService(context, 100,
+                        getStopIntent(context), PendingIntent.FLAG_IMMUTABLE));
         }
         builder
                 .setContentTitle(context.getString(R.string.app_name))
@@ -172,7 +179,9 @@ public class SoundService extends Service {
                 .setContentText(context.getString(R.string.notification_widget))
                 .setSmallIcon(R.drawable.notification_icon)
                 .setTicker(context.getString(R.string.app_name))
-                .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0));
+                .setContentIntent(PendingIntent.getActivity(context, 0, new
+                            Intent(context, MainActivity.class),
+                            PendingIntent.FLAG_IMMUTABLE));
 
 
         if ((volumeTypesToShow != null && volumeTypesToShow.size() > 0) || (profiles != null && profiles.length > 0)) {
@@ -184,7 +193,7 @@ public class SoundService extends Service {
     }
 
     private static String capitalize(String str) {
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
+        return str.substring(0, 1).toUpperCase(Locale.getDefault()) + str.substring(1);
     }
 
     public static Intent getIntentForProfile(Context content, SoundProfile profile) {
@@ -254,8 +263,14 @@ public class SoundService extends Service {
                             n
                     );
                 } else {
-                    notificationManagerCompat.notify(staticNotificationNumber,
-                            n);
+                    boolean canNotify = (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) ? true // before Android13 there's no permission to ask
+                        : (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED);
+
+                    if( canNotify ){
+                        notificationManagerCompat.notify(staticNotificationNumber, n);
+                    }
+                    // TODO: mention permission missing, or start request flow...
+                    //else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {}
                 }
 
                 isForeground = true;

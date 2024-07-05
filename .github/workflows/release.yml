@@ -1,0 +1,44 @@
+name: Main
+run-name: "Build: ${{ github.actor }}: ${{ github.event.head_commit.message }}"
+
+on: [push]
+jobs:
+  Gradle:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          dependency-graph: generate
+          # ^  [disabled, generate, generate-and-submit, generate-and-upload, download-and-submit, clear]. The default value is 'disabled'.
+          # submit to where? upload to where?
+          #validate-wrappers: true
+          # ^ fails if missing in repo but using valid from system path :/
+          build-scan-publish: true
+          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-use-agree: "yes"
+      - name: Gradle Build
+        run: gradle build -x test #--debug --stacktrace
+        # TODO: enable test, when we have any :(
+      #- name: Changelog If Tagged
+        # TODO: write git history to metadata/en-US/changelogs/{{ manifest versionCode value }}.txt
+        # TODO: bump manifest version on release?
+      - name: Release If Tagged
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: app/build/outputs/apk/debug/app-debug.apk
+
+# on github™️ codespace™️ terminal, once:
+# $ sdk use java 17.0.11-ms
+# # chgrp codespace /opt/android -R
+# # chmod g+w /opt/android -R
+#
+# $ gradle build -x test

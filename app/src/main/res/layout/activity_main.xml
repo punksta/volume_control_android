@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <Switch
+        <SwitchCompat
             android:textSize="17sp"
             android:minHeight="48dp"
             android:id="@+id/vibrate_on_calls"
@@ -77,7 +77,7 @@
             android:animateLayoutChanges="true"
             android:orientation="vertical">
 
-            <Switch
+            <SwitchCompat
                 android:minHeight="48dp"
                 android:id="@+id/dark_theme_switcher"
                 android:layout_width="wrap_content"
@@ -85,21 +85,21 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/settings_darktheme" />
 
-            <Switch
+            <SwitchCompat
                 android:minHeight="48dp"
                 android:id="@+id/extended_volumes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/settings_extended_volume_settings" />
 
-            <Switch
+            <SwitchCompat
                 android:id="@+id/notification_widget"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
                 android:text="@string/settings_notification_widget" />
 
-            <Switch
+            <SwitchCompat
                 android:id="@+id/notification_widget_profiles"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -1,0 +1,24 @@
+{"image":"mcr.microsoft.com/devcontainers/universal:2",
+    "features": {
+        "ghcr.io/devcontainers/features/java:latest": {
+            "installGradle": true,
+            "installMaven": true,
+            "installAnt": true,
+            "version": "17",
+            "gradleVersion": "8.8",
+            "jdkDistro": "oracle",
+            "gradleVersion": "latest",
+            "mavenVersion": "latest",
+            "antVersion": "latest"
+        },
+        "ghcr.io/devcontainers-contrib/features/meson-asdf:latest": {
+            "version": "latest"
+        },
+        "ghcr.io/balazs23/devcontainers-features/bazel:latest": {
+            "bazelisk": "latest"
+        },
+        "ghcr.io/akhildevelops/devcontainer-features/android-cli:latest": {
+            "PACKAGES": "platform-tools,platforms;android-34,build-tools;34.0.0"
+        }
+    }
+}

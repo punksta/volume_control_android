@@ -1,41 +1,60 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.2'
+    namespace "com.example.punksta.volumecontrol"
+
+    // Set as the same as targetSdkVersion
+    compileSdkVersion 34
+    buildToolsVersion '34.0.0'
 
     defaultConfig {
         applicationId "com.punksta.apps.volumecontrol"
-        minSdkVersion 15
-        targetSdkVersion 30
+        // minSdkVersion 15 // <-- to enable 15 again, need to figure out why Manifest.xml's tools:overrideLibrary is not working.
+        minSdkVersion 21
+        targetSdkVersion 34
         versionCode 32
-        versionName "2.6.0"
+        versionName "2.6.1"
     }
 
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // ^ missing file?
         }
     }
 
     compileOptions {
         encoding = 'UTF-8'
+        // TODO: drop this 1_8?
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
     lintOptions {
         disable 'GoogleAppIndexingWarning'
+        showAll true
+        explainIssues true
+        textReport true
+        textOutput 'stdout'
     }
 }
 
-def acraVersion = '5.7.0'
-def appcompat_version = "1.3.1"
-
 dependencies {
+    def appcompat_version = "1.7.0"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
-    implementation 'androidx.annotation:annotation:1.2.0'
-    testImplementation 'junit:junit:4.13'
+    implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
+
+    // no idea what uses kotlin, but without this:
+    // error: Duplicate class kotlin.collections.jdk8.CollectionsJDK8Kt found...
+    // https://stackoverflow.com/a/75298544/183132
+    constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
+            because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0") {
+            because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
+        }
+    }
 }

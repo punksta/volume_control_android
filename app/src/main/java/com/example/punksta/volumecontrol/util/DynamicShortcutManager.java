@@ -2,6 +2,7 @@ package com.example.punksta.volumecontrol.util;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.drawable.Icon;
@@ -20,6 +21,13 @@ public class DynamicShortcutManager {
 
     private static String profileToShortcutId(SoundProfile profile) {
         return "profile_" + profile.id.toString();
+    }
+
+    public static void reportUsage(Context context, SoundProfile profile){
+        if (Build.VERSION.SDK_INT >= 25) {
+            ShortcutManager shortcutManager = context.getSystemService(ShortcutManager.class);
+            shortcutManager.reportShortcutUsed(profileToShortcutId(profile));
+        }
     }
 
     private static ShortcutInfo createShortcutInfo(Activity activity, SoundProfile profile) {
